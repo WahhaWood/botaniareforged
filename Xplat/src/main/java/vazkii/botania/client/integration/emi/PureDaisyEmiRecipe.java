@@ -1,0 +1,71 @@
+/*
+ * This class is distributed as part of the Botania Mod.
+ * Get the Source Code in github:
+ * https://github.com/Vazkii/Botania
+ *
+ * Botania is Open Source and distributed under the
+ * Botania License: http://botaniamod.net/license.php
+ */
+
+package vazkii.botania.client.integration.emi;
+
+import dev.emi.emi.api.recipe.EmiRecipe;
+import dev.emi.emi.api.stack.EmiIngredient;
+import dev.emi.emi.api.stack.EmiStack;
+import dev.emi.emi.api.widget.WidgetHolder;
+
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.crafting.RecipeHolder;
+
+import vazkii.botania.api.recipe.PureDaisyRecipe;
+import vazkii.botania.common.block.BotaniaBlocks;
+
+import java.util.List;
+
+import static vazkii.botania.api.BotaniaAPI.botaniaRL;
+
+public class PureDaisyEmiRecipe extends BotaniaEmiRecipe {
+	private static final ResourceLocation TEXTURE = botaniaRL("textures/gui/pure_daisy_overlay.png");
+	private static final EmiStack PURE_DAISY = EmiStack.of(BotaniaBlocks.PURE_DAISY);
+
+	public PureDaisyEmiRecipe(RecipeHolder<? extends PureDaisyRecipe> recipe) {
+		super(BotaniaEmiPlugin.PURE_DAISY, recipe);
+		this.input = List.of(EmiIngredient.of(recipe.value().getInput().getDisplayed().stream().map(s -> {
+			if (s.getFluidState().isEmpty()) {
+				return EmiStack.of(s.getBlock());
+			} else {
+				return EmiStack.of(s.getFluidState().getType());
+			}
+		}).toList()));
+		this.output = recipe.value().getOutput().getDisplayed().stream().map(s -> {
+			if (s.getFluidState().isEmpty()) {
+				return EmiStack.of(s.getBlock());
+			} else {
+				return EmiStack.of(s.getFluidState().getType());
+			}
+		}).toList();
+	}
+
+	@Override
+	public int getDisplayHeight() {
+		return 44;
+	}
+
+	@Override
+	public int getDisplayWidth() {
+		return 96;
+	}
+
+	@Override
+	public void addWidgets(WidgetHolder widgets) {
+		addPureDaisyWidgets(widgets, this, input.getFirst(), PURE_DAISY, output.getFirst());
+	}
+
+	public static void addPureDaisyWidgets(WidgetHolder widgets, EmiRecipe recipe,
+			EmiIngredient input, EmiIngredient flower, EmiStack output) {
+		widgets.add(new BlendTextureWidget(TEXTURE, 17, 0, 65, 44, 0, 0));
+		widgets.addSlot(input, 10, 13).drawBack(false);
+		widgets.addSlot(flower, 39, 13).catalyst(true).drawBack(false);
+		widgets.addSlot(output, 68, 13).drawBack(false).recipeContext(recipe);
+	}
+}

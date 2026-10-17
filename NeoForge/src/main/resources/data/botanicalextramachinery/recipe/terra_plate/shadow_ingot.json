@@ -1,0 +1,22 @@
+{
+  "type": "botania:terrestrial_agglomeration_plate",
+  "ingredients": [
+    {
+      "item": "botanicalextramachinery:saffron_ingot"
+    },
+    {
+      "item": "botania:gaia_ingot"
+    },
+    {
+      "item": "botania:gaia_ingot"
+    },
+    {
+      "item": "botanicalextramachinery:malachite_ingot_block"
+    }
+  ],
+  "mana": 1500000,
+  "result": {
+    "id": "botanicalextramachinery:shadow_ingot",
+    "count": 1
+  }
+}

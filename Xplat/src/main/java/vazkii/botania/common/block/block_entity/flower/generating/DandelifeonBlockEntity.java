@@ -1,0 +1,284 @@
+/*
+ * This class is distributed as part of the Botania Mod.
+ * Get the Source Code in github:
+ * https://github.com/Vazkii/Botania
+ *
+ * Botania is Open Source and distributed under the
+ * Botania License: http://botaniamod.net/license.php
+ */
+package vazkii.botania.common.block.block_entity.flower.generating;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+
+import vazkii.botania.api.block_entity.GeneratingFlowerBlockEntity;
+import vazkii.botania.api.block_entity.RadiusDescriptor;
+import vazkii.botania.common.block.BotaniaBlocks;
+import vazkii.botania.common.block.block_entity.BotaniaBlockEntities;
+import vazkii.botania.common.block.block_entity.CellularBlockEntity;
+import vazkii.botania.common.helper.MathHelper;
+import vazkii.botania.common.helper.NbtHelper;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class DandelifeonBlockEntity extends GeneratingFlowerBlockEntity {
+	public static final int RANGE = 12;
+	public static final int SPEED = 10;
+	public static final int MAX_MANA_GENERATIONS = 100;
+	public static final int MANA_PER_GEN = 60;
+
+	private static final String TAG_RADIUS = "radius";
+
+	private int radius = RANGE;
+
+	private static final int[][] ADJACENT_BLOCKS = new int[][] {
+			{ -1, -1 },
+			{ -1, +0 },
+			{ -1, +1 },
+			{ +0, +1 },
+			{ +1, +1 },
+			{ +1, +0 },
+			{ +1, -1 },
+			{ +0, -1 }
+	};
+
+	public DandelifeonBlockEntity(BlockPos pos, BlockState state) {
+		super(BotaniaBlockEntities.DANDELIFEON, pos, state);
+	}
+
+	public int getRange() {
+		return radius;
+	}
+
+	@Override
+	public void tickFlower() {
+		super.tickFlower();
+
+		if (level.isClientSide() || !isPowered()) {
+			return;
+		}
+		if (shouldUpdateThisTick()) {
+			runSimulation();
+		} else if (shouldTick(level.getGameTime() + 1, getUpdateInterval())) {
+			for (BlockPos pos : MathHelper.aroundPosClosed(getEffectivePos(), radius, 0)) {
+				if (level.getBlockEntity(pos) instanceof CellularBlockEntity cell) {
+					cell.claim(this);
+				}
+			}
+		}
+	}
+
+	@Override
+	protected int getUpdateInterval() {
+		return SPEED;
+	}
+
+	@Override
+	protected boolean shouldTick(long gameTime, int interval) {
+		// don't randomize based on position
+		return (int) (gameTime % interval) == 0;
+	}
+
+	private void runSimulation() {
+		var table = new CellTable(radius, this);
+		List<LifeUpdate> changes = new ArrayList<>();
+		boolean wipe = false;
+
+		for (int i = 0; i < table.diameter; i++) {
+			for (int j = 0; j < table.diameter; j++) {
+				int oldLife = table.at(i, j);
+				int adj = table.getAdjCells(i, j);
+
+				int newLife;
+				if (adj == 3 && oldLife == Cell.DEAD) {
+					// spawn new cell
+					newLife = table.getSpawnCellGeneration(i, j);
+				} else if ((adj == 2 || adj == 3) && Cell.isLive(oldLife)) {
+					// sustain extant cell
+					newLife = oldLife + 1;
+				} else {
+					// kill cell
+					newLife = Cell.DEAD;
+				}
+
+				int xdist = Math.abs(i - radius);
+				int zdist = Math.abs(j - radius);
+				int allowDist = 1;
+				if (xdist <= allowDist && zdist <= allowDist && Cell.isLive(newLife)) {
+					if (oldLife == 1) {
+						// fresh cells shouldn't be placed here at all
+						newLife = Cell.DEAD;
+					} else {
+						// save the new value and consume this cell
+						oldLife = newLife;
+						newLife = Cell.CONSUME;
+						wipe = true;
+					}
+				}
+
+				if (newLife != oldLife) {
+					changes.add(new LifeUpdate(i, j, newLife, oldLife));
+				}
+			}
+		}
+
+		BlockPos.MutableBlockPos changePos = new BlockPos.MutableBlockPos();
+		for (var change : changes) {
+			changePos.setWithOffset(table.center, change.x() - radius, 0, change.z() - radius);
+			int newLife = change.newLife();
+			if (wipe && newLife != Cell.CONSUME) {
+				newLife = Cell.DEAD;
+			}
+
+			setBlockForGeneration(changePos, Math.min(newLife, MAX_MANA_GENERATIONS), change.oldLife());
+		}
+	}
+
+	void setBlockForGeneration(BlockPos pos, int cell, int prevCell) {
+		Level world = getLevel();
+		BlockState stateAt = world.getBlockState(pos);
+		if (cell == Cell.CONSUME) {
+			if (stateAt.isAir()) {
+				int val = prevCell * MANA_PER_GEN;
+				world.removeBlock(pos, true);
+				addMana(val);
+			}
+		} else if (world.getBlockEntity(pos) instanceof CellularBlockEntity cellBlock) {
+			cellBlock.setNextGeneration(this, cell);
+		} else if (Cell.isLive(cell) && stateAt.isAir()) {
+			world.setBlockAndUpdate(pos, BotaniaBlocks.CELLULAR_BLOCK.defaultBlockState());
+			if (world.getBlockEntity(pos) instanceof CellularBlockEntity cellBlock) {
+				cellBlock.setNextGeneration(this, cell);
+				cellBlock.setGeneration(Cell.DEAD); // so that other flowers know this is 'dead' this tick
+			}
+		}
+	}
+
+	public static final class Cell {
+		private Cell() {}
+
+		public static final int CONSUME = -2;
+		public static final int DEAD = -1;
+
+		public static boolean isLive(int i) {
+			return i >= 0;
+		}
+
+		public static int boundaryPunish(int life) {
+			return isLive(life) ? life / 4 : life;
+		}
+	}
+
+	private static class CellTable {
+		public final BlockPos center;
+		public final int diameter;
+		private final int[][] cells;
+
+		public CellTable(int range, DandelifeonBlockEntity dandie) {
+			center = dandie.getEffectivePos();
+			diameter = range * 2 + 1;
+			// store everything in range + one outside
+			cells = new int[diameter + 2][diameter + 2];
+
+			BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+			for (int i = -1; i <= diameter; i++) {
+				for (int j = -1; j <= diameter; j++) {
+					pos.setWithOffset(center, i - range, 0, j - range);
+					cells[i + 1][j + 1] = getCellGeneration(pos, dandie, onBoundary(i, j));
+				}
+			}
+		}
+
+		private static int getCellGeneration(BlockPos pos, DandelifeonBlockEntity dandie, boolean onBoundary) {
+			BlockEntity tile = dandie.getLevel().getBlockEntity(pos);
+			if (tile instanceof CellularBlockEntity cell) {
+				return onBoundary ? (cell.hasActiveParent(dandie) ? Cell.boundaryPunish(cell.getGeneration()) : Cell.DEAD) : cell.getGeneration();
+			}
+
+			return Cell.DEAD;
+		}
+
+		public boolean inBounds(int x, int z) {
+			return x >= 0 && z >= 0 && x < diameter && z < diameter;
+		}
+
+		private boolean onBoundary(int x, int z) {
+			return x == -1 || z == -1 || x == diameter || z == diameter;
+		}
+
+		public int getAdjCells(int x, int z) {
+			int count = 0;
+			for (int[] shift : ADJACENT_BLOCKS) {
+				if (Cell.isLive(this.at(x + shift[0], z + shift[1]))) {
+					count++;
+				}
+			}
+
+			return count;
+		}
+
+		public int getSpawnCellGeneration(int x, int z) {
+			int max = -1;
+			for (int[] shift : ADJACENT_BLOCKS) {
+				max = Math.max(max, this.at(x + shift[0], z + shift[1]));
+			}
+
+			return max == -1 ? Cell.DEAD : max + 1;
+		}
+
+		public int at(int x, int z) {
+			return cells[x + 1][z + 1];
+		}
+	}
+
+	private record LifeUpdate(int x, int z, int newLife, int oldLife) {
+	}
+
+	@Override
+	public RadiusDescriptor getRadius() {
+		return RadiusDescriptor.Rectangle.square(getEffectivePos(), radius);
+	}
+
+	@Override
+	public RadiusDescriptor getSecondaryRadius() {
+		return RadiusDescriptor.Rectangle.square(getEffectivePos(), 1);
+	}
+
+	@Override
+	public int getMaxMana() {
+		return 50000;
+	}
+
+	@Override
+	public int getColor() {
+		return 0x9c0a7e;
+	}
+
+	@Override
+	public void saveAdditional(CompoundTag cmp, HolderLookup.Provider registries) {
+		super.saveAdditional(cmp, registries);
+		if (radius != RANGE) {
+			cmp.putInt(TAG_RADIUS, radius);
+		}
+	}
+
+	@Override
+	public void loadAdditional(CompoundTag cmp, HolderLookup.Provider registries) {
+		super.loadAdditional(cmp, registries);
+		radius = cmp.contains(TAG_RADIUS) ? cmp.getInt(TAG_RADIUS) : RANGE;
+	}
+
+	@Override
+	public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+		var tag = super.getUpdateTag(registries);
+		if (radius != RANGE) {
+			NbtHelper.putVarInt(tag, TAG_RADIUS, radius);
+		}
+		return tag;
+	}
+}

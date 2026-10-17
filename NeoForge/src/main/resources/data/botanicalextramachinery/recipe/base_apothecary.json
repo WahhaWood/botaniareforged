@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "a": {
+      "item": "botania:greater_ring_of_magnetization"
+    },
+    "b": {
+      "item": "botanicalextramachinery:malachite_ingot"
+    },
+    "c": {
+      "item": "botania:petal_apothecary"
+    },
+    "d": {
+      "item": "botanicalextramachinery:malachite_dragonstone_block"
+    }
+  },
+  "pattern": [
+    "aba",
+    "bcb",
+    "ddd"
+  ],
+  "result": {
+    "id": "botanicalextramachinery:base_apothecary",
+    "count": 1
+  },
+  "show_notification": true
+}

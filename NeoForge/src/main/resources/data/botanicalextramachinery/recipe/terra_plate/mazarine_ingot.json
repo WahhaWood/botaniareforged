@@ -1,0 +1,28 @@
+{
+  "type": "botania:terrestrial_agglomeration_plate",
+  "ingredients": [
+    {
+      "item": "botanicalextramachinery:aureate_ingot"
+    },
+    {
+      "item": "botania:gaia_ingot"
+    },
+    {
+      "item": "botania:gaia_ingot"
+    },
+    {
+      "item": "botania:gaia_ingot"
+    },
+    {
+      "item": "botania:gaia_ingot"
+    },
+    {
+      "item": "botanicalextramachinery:aureate_ingot_block"
+    }
+  ],
+  "mana": 5000000,
+  "result": {
+    "id": "botanicalextramachinery:mazarine_ingot",
+    "count": 1
+  }
+}

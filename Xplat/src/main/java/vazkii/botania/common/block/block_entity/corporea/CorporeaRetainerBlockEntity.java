@@ -1,0 +1,172 @@
+/*
+ * This class is distributed as part of the Botania Mod.
+ * Get the Source Code in github:
+ * https://github.com/Vazkii/Botania
+ *
+ * Botania is Open Source and distributed under the
+ * Botania License: http://botaniamod.net/license.php
+ */
+package vazkii.botania.common.block.block_entity.corporea;
+
+import com.mojang.blaze3d.platform.Window;
+
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+
+import org.jetbrains.annotations.Nullable;
+
+import vazkii.botania.api.block.WandHUD;
+import vazkii.botania.api.block.Wandable;
+import vazkii.botania.api.corporea.*;
+import vazkii.botania.api.state.BotaniaStateProperties;
+import vazkii.botania.client.core.helper.RenderHelper;
+import vazkii.botania.common.block.block_entity.BotaniaBlockEntities;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiFunction;
+
+public class CorporeaRetainerBlockEntity extends BlockEntity implements Wandable {
+	private static final String TAG_REQUEST_X = "requestX";
+	private static final String TAG_REQUEST_Y = "requestY";
+	private static final String TAG_REQUEST_Z = "requestZ";
+	private static final String TAG_REQUEST_TYPE = "requestType";
+	private static final String TAG_REQUEST_COUNT = "requestCount";
+
+	private static final Map<ResourceLocation, BiFunction<CompoundTag, HolderLookup.Provider, ? extends CorporeaRequestMatcher>> corporeaMatcherDeserializers = new ConcurrentHashMap<>();
+	private static final Map<Class<? extends CorporeaRequestMatcher>, ResourceLocation> corporeaMatcherSerializers = new ConcurrentHashMap<>();
+
+	@Nullable
+	private BlockPos requestPos;
+
+	@Nullable
+	private CorporeaRequestMatcher request;
+	private int requestCount;
+
+	public CorporeaRetainerBlockEntity(BlockPos pos, BlockState state) {
+		super(BotaniaBlockEntities.CORPOREA_RETAINER, pos, state);
+	}
+
+	public boolean shouldRetainMissing() {
+		return getBlockState().getValue(BotaniaStateProperties.RETAIN_MISSING);
+	}
+
+	public void remember(BlockPos pos, CorporeaRequestMatcher request, int count, int missing) {
+		this.requestPos = pos;
+		this.request = request;
+		this.requestCount = shouldRetainMissing() ? missing : count;
+
+		setChanged();
+	}
+
+	public void forget() {
+		requestPos = null;
+		request = null;
+		requestCount = 0;
+	}
+
+	public int getComparatorValue() {
+		return CorporeaHelper.instance().signalStrengthForRequestSize(requestCount);
+	}
+
+	public boolean hasPendingRequest() {
+		return request != null;
+	}
+
+	public void fulfilRequest() {
+		if (!hasPendingRequest()) {
+			return;
+		}
+
+		CorporeaSpark spark = CorporeaHelper.instance().getSparkForBlock(level, requestPos);
+		if (spark != null) {
+			BlockEntity te = spark.getSparkNode().getWorld().getBlockEntity(spark.getSparkNode().getPos());
+			if (te instanceof CorporeaRequestor requestor) {
+				requestor.doCorporeaRequest(request, requestCount, spark, null);
+
+				forget();
+				setChanged();
+			}
+		}
+	}
+
+	@Override
+	protected void saveAdditional(CompoundTag cmp, HolderLookup.Provider registries) {
+		if (requestPos != null) {
+			cmp.putInt(TAG_REQUEST_X, requestPos.getX());
+			cmp.putInt(TAG_REQUEST_Y, requestPos.getY());
+			cmp.putInt(TAG_REQUEST_Z, requestPos.getZ());
+		}
+		ResourceLocation reqType = request != null ? corporeaMatcherSerializers.get(request.getClass()) : null;
+
+		if (reqType != null) {
+			cmp.putString(TAG_REQUEST_TYPE, reqType.toString());
+			request.writeToNBT(cmp, registries);
+			cmp.putInt(TAG_REQUEST_COUNT, requestCount);
+		}
+	}
+
+	@Override
+	protected void loadAdditional(CompoundTag cmp, HolderLookup.Provider registries) {
+		if (cmp.contains(TAG_REQUEST_X)) {
+			requestPos = new BlockPos(
+					cmp.getInt(TAG_REQUEST_X),
+					cmp.getInt(TAG_REQUEST_Y),
+					cmp.getInt(TAG_REQUEST_Z));
+		} else {
+			requestPos = null;
+		}
+		ResourceLocation reqType = ResourceLocation.tryParse(cmp.getString(TAG_REQUEST_TYPE));
+		if (reqType != null && corporeaMatcherDeserializers.containsKey(reqType)) {
+			request = corporeaMatcherDeserializers.get(reqType).apply(cmp, registries);
+		} else {
+			request = null;
+		}
+		requestCount = cmp.getInt(TAG_REQUEST_COUNT);
+	}
+
+	public static <T extends CorporeaRequestMatcher> void addCorporeaRequestMatcher(ResourceLocation id, Class<T> clazz, BiFunction<CompoundTag, HolderLookup.Provider, T> deserializer) {
+		corporeaMatcherSerializers.put(clazz, id);
+		corporeaMatcherDeserializers.put(id, deserializer);
+	}
+
+	public static class WandHud implements WandHUD {
+		private final CorporeaRetainerBlockEntity retainer;
+
+		public WandHud(CorporeaRetainerBlockEntity retainer) {
+			this.retainer = retainer;
+		}
+
+		@Override
+		public void renderHUD(GuiGraphics gui, Window window, Font font, float partialTick) {
+			String mode = I18n.get("botaniamisc.retainer." + (retainer.shouldRetainMissing() ? "retain_missing" : "retain_all"));
+			int strWidth = font.width(mode);
+			int x = (window.getGuiScaledWidth() - strWidth) / 2;
+			int y = window.getGuiScaledHeight() / 2 + 8;
+
+			RenderHelper.renderHUDBox(gui, x - 2, y, x + strWidth + 2, y + 12);
+			gui.drawString(font, mode, x, y + 2, ChatFormatting.WHITE.getColor());
+		}
+	}
+
+	@Override
+	public boolean onUsedByWand(Player player, ItemStack stack, Direction side) {
+		if (!level.isClientSide()) {
+			level.setBlock(getBlockPos(), getBlockState().cycle(BotaniaStateProperties.RETAIN_MISSING),
+					Block.UPDATE_CLIENTS);
+		}
+		return true;
+	}
+}

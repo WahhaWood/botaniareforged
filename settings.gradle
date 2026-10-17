@@ -1,0 +1,22 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+        maven {
+            name = "NeoForged"
+            url = "https://maven.neoforged.net/releases"
+            content {
+                includeGroup("net.neoforged")
+            }
+        }
+    }
+}
+
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+}
+
+rootProject.name = "Botania"
+includeBuild("build-logic")
+include("Xplat")
+include("NeoForge")

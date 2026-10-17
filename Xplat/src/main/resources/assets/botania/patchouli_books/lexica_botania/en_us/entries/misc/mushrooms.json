@@ -1,0 +1,35 @@
+{
+  "name": "botania.entry.mushrooms",
+  "category": "botania:misc",
+  "icon": "botania:white_shimmering_mushroom",
+  "advancement": "botania:main/flower_pickup_lexicon",
+  "pages": [
+    {
+      "type": "text",
+      "text": "botania.page.mushrooms0"
+    },
+    {
+      "type": "botania:crafting_multi",
+      "heading":"botania.entry.mushrooms",
+      "text": "botania.page.mushrooms1",
+      "recipes": [
+        "botania:white_shimmering_mushroom",
+        "botania:orange_shimmering_mushroom",
+        "botania:magenta_shimmering_mushroom",
+        "botania:light_blue_shimmering_mushroom",
+        "botania:yellow_shimmering_mushroom",
+        "botania:lime_shimmering_mushroom",
+        "botania:pink_shimmering_mushroom",
+        "botania:gray_shimmering_mushroom",
+        "botania:light_gray_shimmering_mushroom",
+        "botania:cyan_shimmering_mushroom",
+        "botania:purple_shimmering_mushroom",
+        "botania:blue_shimmering_mushroom",
+        "botania:brown_shimmering_mushroom",
+        "botania:green_shimmering_mushroom",
+        "botania:red_shimmering_mushroom",
+        "botania:black_shimmering_mushroom"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "parent": "botania:main/root",
+  "criteria": {
+    "use_lexicon": {
+      "conditions": {
+        "item": {
+          "items": "botania:lexica_botania"
+        }
+      },
+      "trigger": "botania:use_item_success"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.botania:lexiconUse.desc"
+    },
+    "icon": {
+      "count": 1,
+      "id": "botania:lexica_botania"
+    },
+    "title": {
+      "translate": "advancement.botania:lexiconUse"
+    }
+  },
+  "requirements": [
+    [
+      "use_lexicon"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

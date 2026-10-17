@@ -1,0 +1,160 @@
+/*
+ * This class is distributed as part of the Botania Mod.
+ * Get the Source Code in github:
+ * https://github.com/Vazkii/Botania
+ *
+ * Botania is Open Source and distributed under the
+ * Botania License: http://botaniamod.net/license.php
+ */
+package vazkii.botania.common.block;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.Containers;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+
+import org.jetbrains.annotations.Nullable;
+
+import vazkii.botania.common.block.block_entity.BotaniaBlockEntities;
+import vazkii.botania.common.block.block_entity.IncensePlateBlockEntity;
+import vazkii.botania.xplat.XplatAbstractions;
+
+public class IncensePlateBlock extends BotaniaWaterloggedBlock implements EntityBlock {
+
+	private static final VoxelShape X_SHAPE = box(6, 0, 2, 10, 1, 14);
+	private static final VoxelShape Z_SHAPE = box(2, 0, 6, 14, 1, 10);
+
+	protected IncensePlateBlock(Properties builder) {
+		super(builder);
+		registerDefaultState(defaultBlockState()
+				.setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.SOUTH)
+				.setValue(BlockStateProperties.LIT, false));
+	}
+
+	@Override
+	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+		super.createBlockStateDefinition(builder);
+		builder.add(BlockStateProperties.HORIZONTAL_FACING, BlockStateProperties.LIT);
+	}
+
+	@Override
+	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+		if (!(world.getBlockEntity(pos) instanceof IncensePlateBlockEntity plate)) {
+			return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+		}
+		ItemStack plateStack = plate.getItemHandler().getItem(0);
+
+		if (plateStack.isEmpty() && plate.acceptsItem(stack)) {
+			plate.getItemHandler().setItem(0, stack.copy());
+			world.gameEvent(null, GameEvent.BLOCK_CHANGE, pos);
+			stack.shrink(1);
+			return ItemInteractionResult.sidedSuccess(world.isClientSide());
+		}
+		if (!plateStack.isEmpty() && !state.getValue(BlockStateProperties.LIT)) {
+			if (stack.is(Items.FIRE_CHARGE)) {
+				plate.ignite();
+				RandomSource randomsource = world.getRandom();
+				world.playSound(player, pos, SoundEvents.FIRECHARGE_USE, SoundSource.BLOCKS, 1.0F, (randomsource.nextFloat() - randomsource.nextFloat()) * 0.2F + 1.0F);
+				if (!player.hasInfiniteMaterials()) {
+					stack.shrink(1);
+				}
+			} else if (XplatAbstractions.INSTANCE.canToolLightFire(stack)) {
+				plate.ignite();
+				world.playSound(player, pos, SoundEvents.FLINTANDSTEEL_USE, SoundSource.BLOCKS, 1.0F, world.getRandom().nextFloat() * 0.4F + 0.8F);
+				stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
+			} else {
+				player.getInventory().placeItemBackInInventory(plateStack);
+				plate.getItemHandler().setItem(0, ItemStack.EMPTY);
+				world.gameEvent(null, GameEvent.BLOCK_CHANGE, pos);
+			}
+			return ItemInteractionResult.sidedSuccess(world.isClientSide());
+		}
+
+		return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+	}
+
+	@Override
+	public BlockState getStateForPlacement(BlockPlaceContext context) {
+		return super.getStateForPlacement(context).setValue(BlockStateProperties.HORIZONTAL_FACING, context.getHorizontalDirection().getOpposite());
+	}
+
+	@Override
+	public BlockState mirror(BlockState state, Mirror mirror) {
+		return state.setValue(BlockStateProperties.HORIZONTAL_FACING, mirror.mirror(state.getValue(BlockStateProperties.HORIZONTAL_FACING)));
+	}
+
+	@Override
+	public BlockState rotate(BlockState state, Rotation rot) {
+		return state.setValue(BlockStateProperties.HORIZONTAL_FACING, rot.rotate(state.getValue(BlockStateProperties.HORIZONTAL_FACING)));
+	}
+
+	@Override
+	public boolean hasAnalogOutputSignal(BlockState state) {
+		return true;
+	}
+
+	@Override
+	public int getAnalogOutputSignal(BlockState state, Level world, BlockPos pos) {
+		return world.getBlockEntity(pos) instanceof IncensePlateBlockEntity plate ? plate.comparatorOutput : 0;
+	}
+
+	@Override
+	public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext ctx) {
+		return state.getValue(BlockStateProperties.HORIZONTAL_FACING).getAxis() == Direction.Axis.X ? X_SHAPE : Z_SHAPE;
+	}
+
+	@Override
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+		return new IncensePlateBlockEntity(pos, state);
+	}
+
+	@Nullable
+	@Override
+	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+		return createTickerHelper(type, BotaniaBlockEntities.INCENSE_PLATE,
+				level.isClientSide() ? IncensePlateBlockEntity::clientTick : IncensePlateBlockEntity::serverTick);
+	}
+
+	@Override
+	public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean isMoving) {
+		if (!state.is(newState.getBlock()) && !state.getValue(BlockStateProperties.LIT)
+				&& world.getBlockEntity(pos) instanceof IncensePlateBlockEntity plate) {
+			Containers.dropContents(world, pos, plate.getItemHandler());
+		}
+		super.onRemove(state, world, pos, newState, isMoving);
+	}
+
+	@Override
+	public void onProjectileHit(Level level, BlockState blockState, BlockHitResult hit, Projectile projectile) {
+		if (!level.isClientSide() && projectile.mayInteract(level, hit.getBlockPos()) && projectile.isOnFire()
+				&& level.getBlockEntity(hit.getBlockPos()) instanceof IncensePlateBlockEntity plate) {
+			plate.ignite();
+		}
+	}
+}

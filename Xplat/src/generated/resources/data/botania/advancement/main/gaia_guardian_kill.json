@@ -1,0 +1,37 @@
+{
+  "parent": "botania:main/elf_portal_open",
+  "criteria": {
+    "guardian": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "botania:gaia_guardian"
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:player_killed_entity"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.botania:gaiaGuardianKill.desc"
+    },
+    "icon": {
+      "count": 1,
+      "id": "botania:gaia_head"
+    },
+    "title": {
+      "translate": "advancement.botania:gaiaGuardianKill"
+    }
+  },
+  "requirements": [
+    [
+      "guardian"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

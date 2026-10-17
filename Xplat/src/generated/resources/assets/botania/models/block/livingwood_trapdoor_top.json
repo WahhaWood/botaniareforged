@@ -1,0 +1,7 @@
+{
+  "parent": "botania:block/shapes/trapdoor_top",
+  "textures": {
+    "side": "botania:block/livingwood_trapdoor_side",
+    "texture": "botania:block/livingwood_trapdoor"
+  }
+}

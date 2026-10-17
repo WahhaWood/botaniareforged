@@ -1,0 +1,35 @@
+{
+  "criteria": {
+    "flower": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#botania:small_mystical_flowers"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "background": "botania:textures/block/livingrock_bricks.png",
+    "description": {
+      "translate": "advancement.botania_challenge.desc"
+    },
+    "icon": {
+      "count": 1,
+      "id": "botania:dice_of_fate"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancement.botania_challenge"
+    }
+  },
+  "requirements": [
+    [
+      "flower"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

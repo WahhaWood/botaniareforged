@@ -1,0 +1,111 @@
+{
+  "name": "botania.entry.pool",
+  "category": "botania:mana",
+  "icon": "botania:mana_pool",
+  "priority": true,
+  "advancement": "botania:main/pure_daisy_pickup",
+  "turnin": "botania:main/mana_pool_pickup_lexicon",
+  "pages": [
+    {
+      "type": "text",
+      "text": "botania.page.pool0"
+    },
+    {
+      "type": "text",
+      "text": "botania.page.pool9"
+    },
+    {
+      "type": "crafting",
+      "text": "botania.page.pool1",
+      "recipe": "botania:mana_pool"
+    },
+    {
+      "type": "crafting",
+      "text": "botania.page.pool10",
+      "recipe": "botania:diluted_mana_pool"
+    },
+    {
+      "type": "text",
+      "text": "botania.page.pool14"
+    },
+    {
+      "type": "text",
+      "text": "botania.page.pool8"
+    },
+    {
+      "type": "text",
+      "text": "botania.page.pool2"
+    },
+    {
+      "type": "botania:mana_infusion",
+      "text": "botania.page.pool4",
+      "recipes": "botania:mana_infusion/mana_pearl"
+    },
+    {
+      "type": "botania:mana_infusion",
+      "heading": "botania.page.pool16",
+      "text": "botania.page.pool3",
+      "anchor": "manasteel",
+      "recipes": [
+        "botania:mana_infusion/manasteel_ingot",
+        "botania:mana_infusion/manasteel_block"
+      ]
+    },
+    {
+      "type": "botania:crafting_multi_double",
+      "heading": "botania.page.pool16",
+      "text": "botania.page.pool3_crafting",
+      "recipes": [
+        "botania:manasteel_ingot_from_nuggets",
+        "botania:manasteel_block"
+      ],
+      "recipes2": [
+        "botania:manasteel_nugget",
+        "botania:manasteel_ingot_from_manasteel_block"
+      ]
+    },
+    {
+      "type": "botania:mana_infusion",
+      "text": "botania.page.pool5",
+      "anchor": "mana_diamond",
+      "recipes": [
+        "botania:mana_infusion/mana_diamond",
+        "botania:mana_infusion/mana_diamond_block"
+      ]
+    },
+    {
+      "type": "botania:mana_infusion",
+      "text": "botania.page.pool6",
+      "anchor": "mana_dust",
+      "recipes": [
+        "botania:mana_infusion/mana_powder_from_dust",
+        "botania:mana_infusion/mana_powder_from_dye"
+      ]
+    },
+    {
+      "type": "botania:mana_infusion",
+      "text": "botania.page.pool11",
+      "anchor": "managlass",
+      "recipes": "botania:mana_infusion/managlass"
+    },
+    {
+      "type": "botania:mana_infusion",
+      "text": "botania.page.pool12",
+      "anchor": "mana_string",
+      "recipes": "botania:mana_infusion/mana_string"
+    },
+    {
+      "type": "crafting",
+      "text": "botania.page.pool13",
+      "recipe": "botania:cobweb"
+    },
+    {
+      "type": "botania:mana_infusion",
+      "text": "botania.page.pool7",
+      "recipes": "botania:mana_infusion/biscuit_of_totality"
+    }
+  ],
+  "extra_recipe_mappings": {
+    "botania:managlass_pane": 13
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "type": "botania:terrestrial_agglomeration_plate",
+  "ingredients": [
+    {
+      "item": "botania:dragonstone"
+    },
+    {
+      "item": "botania:pixie_dust"
+    },
+    {
+      "item": "botania:elementium_ingot"
+    }
+  ],
+  "mana": 150000,
+  "result": {
+    "id": "mythicbotany:alfsteel_ingot",
+    "count": 1
+  },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "mythicbotany"
+    }
+  ]
+}

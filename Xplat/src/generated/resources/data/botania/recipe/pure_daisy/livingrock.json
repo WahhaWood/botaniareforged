@@ -1,0 +1,14 @@
+{
+  "type": "botania:pure_daisy",
+  "input": {
+    "type": "botania:block",
+    "block": "minecraft:stone"
+  },
+  "output": {
+    "type": "botania:state",
+    "state": {
+      "Name": "botania:livingrock"
+    }
+  },
+  "time": 150
+}

@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "botanicalextramachinery:catalyst_pattern"
+    },
+    {
+      "item": "botania:livingrock"
+    },
+    {
+      "item": "botania:runic_altar"
+    },
+    {
+      "item": "botania:rune_of_envy"
+    }
+  ],
+  "result": {
+    "id": "botanicalextramachinery:catalyst_living_rock_infinity",
+    "count": 1
+  },
+  "show_notification": true
+}

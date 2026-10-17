@@ -1,0 +1,446 @@
+{
+  "type": "minecraft:equipment",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "value": {
+            "pools": [
+              {
+                "bonus_rolls": 0.0,
+                "conditions": [
+                  {
+                    "condition": "minecraft:entity_properties",
+                    "entity": "this",
+                    "predicate": {
+                      "nbt": "{VillagerData:{profession:\"minecraft:armorer\"}}"
+                    }
+                  }
+                ],
+                "entries": [
+                  {
+                    "type": "minecraft:loot_table",
+                    "value": {
+                      "pools": [
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:item",
+                              "name": "minecraft:chainmail_helmet"
+                            }
+                          ],
+                          "rolls": {
+                            "type": "minecraft:uniform",
+                            "max": 1.0,
+                            "min": 0.0
+                          }
+                        },
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:item",
+                              "name": "minecraft:chainmail_chestplate"
+                            }
+                          ],
+                          "rolls": {
+                            "type": "minecraft:uniform",
+                            "max": 1.0,
+                            "min": 0.0
+                          }
+                        },
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:item",
+                              "name": "minecraft:chainmail_leggings"
+                            }
+                          ],
+                          "rolls": {
+                            "type": "minecraft:uniform",
+                            "max": 1.0,
+                            "min": 0.0
+                          }
+                        },
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:item",
+                              "name": "minecraft:chainmail_boots"
+                            }
+                          ],
+                          "rolls": {
+                            "type": "minecraft:uniform",
+                            "max": 1.0,
+                            "min": 0.0
+                          }
+                        }
+                      ]
+                    },
+                    "weight": 4
+                  },
+                  {
+                    "type": "minecraft:loot_table",
+                    "value": {
+                      "pools": [
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:item",
+                              "name": "minecraft:iron_helmet"
+                            }
+                          ],
+                          "rolls": {
+                            "type": "minecraft:uniform",
+                            "max": 1.0,
+                            "min": 0.0
+                          }
+                        },
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:item",
+                              "name": "minecraft:iron_chestplate"
+                            }
+                          ],
+                          "rolls": {
+                            "type": "minecraft:uniform",
+                            "max": 1.0,
+                            "min": 0.0
+                          }
+                        },
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:item",
+                              "name": "minecraft:iron_leggings"
+                            }
+                          ],
+                          "rolls": {
+                            "type": "minecraft:uniform",
+                            "max": 1.0,
+                            "min": 0.0
+                          }
+                        },
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:item",
+                              "name": "minecraft:iron_boots"
+                            }
+                          ],
+                          "rolls": {
+                            "type": "minecraft:uniform",
+                            "max": 1.0,
+                            "min": 0.0
+                          }
+                        }
+                      ]
+                    },
+                    "weight": 10
+                  },
+                  {
+                    "type": "minecraft:loot_table",
+                    "value": {
+                      "pools": [
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:item",
+                              "name": "minecraft:diamond_helmet"
+                            }
+                          ],
+                          "rolls": {
+                            "type": "minecraft:uniform",
+                            "max": 1.0,
+                            "min": 0.0
+                          }
+                        },
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:item",
+                              "name": "minecraft:diamond_chestplate"
+                            }
+                          ],
+                          "rolls": {
+                            "type": "minecraft:uniform",
+                            "max": 1.0,
+                            "min": 0.0
+                          }
+                        },
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:item",
+                              "name": "minecraft:diamond_leggings"
+                            }
+                          ],
+                          "rolls": {
+                            "type": "minecraft:uniform",
+                            "max": 1.0,
+                            "min": 0.0
+                          }
+                        },
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:item",
+                              "name": "minecraft:diamond_boots"
+                            }
+                          ],
+                          "rolls": {
+                            "type": "minecraft:uniform",
+                            "max": 1.0,
+                            "min": 0.0
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "rolls": 1.0
+              },
+              {
+                "bonus_rolls": 0.0,
+                "conditions": [
+                  {
+                    "condition": "minecraft:entity_properties",
+                    "entity": "this",
+                    "predicate": {
+                      "nbt": "{VillagerData:{profession:\"minecraft:leatherworker\"}}"
+                    }
+                  }
+                ],
+                "entries": [
+                  {
+                    "type": "minecraft:loot_table",
+                    "value": {
+                      "pools": [
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:item",
+                              "name": "minecraft:leather_helmet"
+                            }
+                          ],
+                          "rolls": {
+                            "type": "minecraft:uniform",
+                            "max": 1.0,
+                            "min": 0.0
+                          }
+                        },
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:item",
+                              "name": "minecraft:leather_chestplate"
+                            }
+                          ],
+                          "rolls": {
+                            "type": "minecraft:uniform",
+                            "max": 1.0,
+                            "min": 0.0
+                          }
+                        },
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:item",
+                              "name": "minecraft:leather_leggings"
+                            }
+                          ],
+                          "rolls": {
+                            "type": "minecraft:uniform",
+                            "max": 1.0,
+                            "min": 0.0
+                          }
+                        },
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:item",
+                              "name": "minecraft:leather_boots"
+                            }
+                          ],
+                          "rolls": {
+                            "type": "minecraft:uniform",
+                            "max": 1.0,
+                            "min": 0.0
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "rolls": 1.0
+              },
+              {
+                "bonus_rolls": 0.0,
+                "entries": [
+                  {
+                    "type": "minecraft:loot_table",
+                    "conditions": [
+                      {
+                        "condition": "minecraft:entity_properties",
+                        "entity": "this",
+                        "predicate": {
+                          "nbt": "{VillagerData:{profession:\"minecraft:butcher\"}}"
+                        }
+                      }
+                    ],
+                    "value": {
+                      "pools": [
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:item",
+                              "name": "minecraft:iron_axe",
+                              "weight": 4
+                            },
+                            {
+                              "type": "minecraft:item",
+                              "name": "minecraft:diamond_axe"
+                            }
+                          ],
+                          "functions": [
+                            {
+                              "conditions": [
+                                {
+                                  "chance": 0.3,
+                                  "condition": "minecraft:random_chance"
+                                }
+                              ],
+                              "function": "minecraft:enchant_randomly",
+                              "options": "#minecraft:on_random_loot"
+                            }
+                          ],
+                          "rolls": 1.0
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "conditions": [
+                      {
+                        "condition": "minecraft:entity_properties",
+                        "entity": "this",
+                        "predicate": {
+                          "nbt": "{VillagerData:{profession:\"minecraft:farmer\"}}"
+                        }
+                      }
+                    ],
+                    "name": "minecraft:iron_hoe"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "conditions": [
+                      {
+                        "condition": "minecraft:entity_properties",
+                        "entity": "this",
+                        "predicate": {
+                          "nbt": "{VillagerData:{profession:\"minecraft:fletcher\"}}"
+                        }
+                      }
+                    ],
+                    "name": "minecraft:bow"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "conditions": [
+                      {
+                        "condition": "minecraft:entity_properties",
+                        "entity": "this",
+                        "predicate": {
+                          "nbt": "{VillagerData:{profession:\"minecraft:fisherman\"}}"
+                        }
+                      }
+                    ],
+                    "name": "minecraft:fishing_rod"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "conditions": [
+                      {
+                        "condition": "minecraft:entity_properties",
+                        "entity": "this",
+                        "predicate": {
+                          "nbt": "{VillagerData:{profession:\"minecraft:toolsmith\"}}"
+                        }
+                      }
+                    ],
+                    "name": "minecraft:iron_pickaxe"
+                  },
+                  {
+                    "type": "minecraft:loot_table",
+                    "conditions": [
+                      {
+                        "condition": "minecraft:entity_properties",
+                        "entity": "this",
+                        "predicate": {
+                          "nbt": "{VillagerData:{profession:\"minecraft:weaponsmith\"}}"
+                        }
+                      }
+                    ],
+                    "value": {
+                      "pools": [
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:item",
+                              "name": "minecraft:iron_sword",
+                              "weight": 4
+                            },
+                            {
+                              "type": "minecraft:item",
+                              "name": "minecraft:diamond_sword"
+                            }
+                          ],
+                          "functions": [
+                            {
+                              "conditions": [
+                                {
+                                  "chance": 0.3,
+                                  "condition": "minecraft:random_chance"
+                                }
+                              ],
+                              "function": "minecraft:enchant_randomly",
+                              "options": "#minecraft:on_random_loot"
+                            }
+                          ],
+                          "rolls": 1.0
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "rolls": 1.0
+              }
+            ]
+          }
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}

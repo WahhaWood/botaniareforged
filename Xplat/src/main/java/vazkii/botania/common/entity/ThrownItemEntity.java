@@ -1,0 +1,72 @@
+/*
+ * This class is distributed as part of the Botania Mod.
+ * Get the Source Code in github:
+ * https://github.com/Vazkii/Botania
+ *
+ * Botania is Open Source and distributed under the
+ * Botania License: http://botaniamod.net/license.php
+ */
+package vazkii.botania.common.entity;
+
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
+
+import vazkii.botania.mixin.ItemEntityAccessor;
+
+import java.util.function.Predicate;
+
+public class ThrownItemEntity extends ItemEntity {
+	public ThrownItemEntity(EntityType<ThrownItemEntity> type, Level world) {
+		super(type, world);
+	}
+
+	public ThrownItemEntity(Level world, double x, double y, double z, ItemEntity item) {
+		super(world, x, y, z, item.getItem());
+		setPickUpDelay(((ItemEntityAccessor) item).botania_getPickupDelay());
+		setDeltaMovement(item.getDeltaMovement());
+		setInvulnerable(true);
+	}
+
+	@Override
+	public EntityType<?> getType() {
+		return BotaniaEntities.THROWN_ITEM;
+	}
+
+	@Override
+	public void tick() {
+		super.tick();
+
+		if (isRemoved()) {
+			return;
+		}
+
+		int pickupDelay = ((ItemEntityAccessor) this).botania_getPickupDelay();
+		Predicate<Entity> filter = e -> !e.isSpectator() && e.isAlive() && e.isPickable()
+				&& (!(e instanceof Player) || pickupDelay == 0);
+		HitResult hitResult = ProjectileUtil.getHitResultOnMoveVector(this, filter);
+
+		// Bonk any entities hit
+		if (!level().isClientSide() && hitResult.getType() == HitResult.Type.ENTITY) {
+			Entity bonk = ((EntityHitResult) hitResult).getEntity();
+			bonk.hurt(damageSources().magic(), 2.0F);
+			Entity item = new ItemEntity(level(), getX(), getY(), getZ(), getItem());
+			level().addFreshEntity(item);
+			item.setDeltaMovement(getDeltaMovement().scale(0.25));
+			discard();
+			return;
+		}
+
+		if (!level().isClientSide() && getDeltaMovement().length() < 1.0F) {
+			Entity item = new ItemEntity(level(), getX(), getY(), getZ(), getItem());
+			level().addFreshEntity(item);
+			item.setDeltaMovement(getDeltaMovement());
+			discard();
+		}
+	}
+}

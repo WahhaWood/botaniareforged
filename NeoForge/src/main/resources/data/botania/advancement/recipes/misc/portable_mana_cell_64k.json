@@ -1,0 +1,43 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_energy_cell": {
+      "conditions": {
+        "items": [
+          {
+            "items": "ae2:energy_cell"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_mana_cell_housing": {
+      "conditions": {
+        "items": [
+          {
+            "items": "botania:mana_cell_housing"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "botania:portable_mana_cell_64k"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_mana_cell_housing",
+      "has_energy_cell"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "botania:portable_mana_cell_64k"
+    ]
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "parent": "botania:main/root",
+  "criteria": {
+    "double_flower": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#botania:tall_mystical_flowers"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "elven_lexicon": {
+      "conditions": {
+        "items": [
+          {
+            "components": {
+              "botania:elven_unlock": {}
+            },
+            "items": "botania:lexica_botania"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "flower": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#botania:small_mystical_flowers"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "flower",
+      "double_flower",
+      "elven_lexicon"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

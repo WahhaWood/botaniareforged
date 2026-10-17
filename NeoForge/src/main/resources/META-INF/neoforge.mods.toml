@@ -1,0 +1,83 @@
+modLoader = "javafml"
+loaderVersion = "${neoforge_loader_version_range}"
+license = "${license}"
+issueTrackerURL = "${issues_url}"
+
+[[mods]]
+modId = "botania"
+version = "${version}"
+displayName = "${mod_name}"
+displayURL = "${website_url}"
+logoFile = "logo.png"
+description = '''${description}'''
+authors = "Vazkii, wiiv, williewillus, dylan4ever, Hubry, Alwinfy, artemisSystem, Falkory220, Wormbo"
+credits = "Azanor, Flaxbeard, Futureazoo, Rorax, Lorc, Adubbz, WTFG33ks, Auric245524, MegaManki, Kain Vinosec, Kihira, mDiyo, Mikeemoo, ChickenBones, PowerCrystals, cpw, quat1024, ToMe25, Eutro and others"
+
+itemIcon = "botania:cosmetic_botanist_emblem" # custom icon for Catalogue's mod list
+configBackground = "botania:textures/block/livingrock_bricks.png" # background for Configured's generated config screen
+
+[[mixins]]
+config = "${mod_id}.xplat.mixins.json"
+
+[[mixins]]
+config = "${mod_id}.neoforge.mixins.json"
+
+# Applied Botanics (merged addon)
+[[mixins]]
+config = "botania.ae2.mixins.json"
+
+[[dependencies.botania]]
+modId = "neoforge"
+type = "required"
+versionRange = "[${neoforge_version},)"
+
+[[dependencies.botania]]
+modId = "minecraft"
+type = "required"
+versionRange = "${minecraft_version}"
+
+[[dependencies.botania]]
+modId = "patchouli"
+type = "required"
+versionRange = "*"
+
+[[dependencies.botania]]
+modId = "curios"
+type = "required"
+versionRange = "*"
+
+# Required by the merged Botanical Extra Machinery addon: every machine block
+# entity implements AE2's IInWorldGridNodeHost / IGridConnectedBlockEntity and
+# talks to TickHandler, so loading without AE2 is a NoClassDefFoundError.
+[[dependencies.botania]]
+modId = "ae2"
+type = "required"
+versionRange = "[19.2.17,)"
+
+[[dependencies.botania]]
+modId = "gardenofglass"
+type = "optional"
+versionRange = "[${gog_version},)"
+
+[[dependencies.botania]]
+modId = "ears"
+type = "optional"
+versionRange = "*"
+
+[[dependencies.botania]]
+modId = "fastitemframes"
+type = "discouraged"
+versionRange = "*"
+reason = "Breaks Botania's various item frame-based filtering functionalities"
+
+[[dependencies.botania]]
+modId = "openpartiesandclaims"
+type = "discouraged"
+versionRange = "*"
+reason = "Default claiming behavior breaks basic Botania automation (e.g. mana spreaders)"
+
+[[dependencies.botania]]
+modId = "productivebees"
+type = "incompatible"
+versionRange = "[1.21.1-13.8.0,1.21.1-13.13.4)"
+reason = "These versions cause a crash in Botania due to a ClassCastException. This is fixed in later versions of Productive Bees."

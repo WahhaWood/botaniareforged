@@ -1,0 +1,43 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_essence": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#botania:ender_essences"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_pixie_dust": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#c:dusts/pixie"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "botania:corporea_spark"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_essence",
+      "has_pixie_dust"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "botania:corporea_spark"
+    ]
+  }
+}

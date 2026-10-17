@@ -1,0 +1,51 @@
+package net.lmor.botanicalextramachinery.blocks.blockMachines.mechanicalIndustrialAgglomerationFactory;
+
+import net.lmor.botanicalextramachinery.blocks.base.ExtraBotanicalBlock;
+import net.lmor.botanicalextramachinery.blocks.containers.mechanicalIndustrialAgglomerationFactory.ContainerIndustrialAgglomerationFactoryBase;
+import net.lmor.botanicalextramachinery.blocks.tesr.mechanicalIndustrialAgglomerationFactory.RenderIndustrialAgglomerationFactoryBase;
+import net.lmor.botanicalextramachinery.blocks.tiles.mechanicalIndustrialAgglomerationFactory.BlockEntityIndustrialAgglomerationFactoryBase;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+
+import org.moddingx.libx.block.RotationShape;
+import org.moddingx.libx.menu.type.AdvancedMenuType;
+import org.moddingx.libx.mod.ModX;
+import org.moddingx.libx.registration.SetupContext;
+
+import javax.annotation.Nonnull;
+
+public class BlockIndustrialAgglomerationFactoryBase extends ExtraBotanicalBlock<BlockEntityIndustrialAgglomerationFactoryBase, ContainerIndustrialAgglomerationFactoryBase> {
+	public static final RotationShape SHAPE;
+
+	public BlockIndustrialAgglomerationFactoryBase(ModX mod, Class<BlockEntityIndustrialAgglomerationFactoryBase> teClass, AdvancedMenuType<ContainerIndustrialAgglomerationFactoryBase, ? super BlockPos> menu) {
+		super(mod, teClass, menu, false, true);
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	@Override
+	public void setupClient(SetupContext ctx) {
+		super.setupClient(ctx);
+		BlockEntityRenderers.register(this.getBlockEntityType(), (context) -> {
+			return new RenderIndustrialAgglomerationFactoryBase();
+		});
+	}
+
+	@Nonnull
+	@Override
+	public VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos, @Nonnull CollisionContext context) {
+		return SHAPE.getShape((Direction) state.getValue(BlockStateProperties.HORIZONTAL_FACING));
+	}
+
+	static {
+		SHAPE = new RotationShape(Shapes.or(ExtraBotanicalBlock.FRAME_SHAPE, box(2.6, 0.0, 2.6, 13.4, 4.6, 13.4), box(6.2, 0.0, 6.2, 9.8, 5.3, 9.8)));
+	}
+}

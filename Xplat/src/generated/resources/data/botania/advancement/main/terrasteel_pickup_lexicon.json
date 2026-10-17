@@ -1,0 +1,35 @@
+{
+  "parent": "botania:main/flower_pickup",
+  "criteria": {
+    "elven_lexicon": {
+      "conditions": {
+        "items": [
+          {
+            "components": {
+              "botania:elven_unlock": {}
+            },
+            "items": "botania:lexica_botania"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "terrasteel": {
+      "conditions": {
+        "items": [
+          {
+            "items": "botania:terrasteel_ingot"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "terrasteel",
+      "elven_lexicon"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "botania:block/me_apothecary"
+    },
+    "facing=east": {
+      "model": "botania:block/me_apothecary",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "botania:block/me_apothecary",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "botania:block/me_apothecary",
+      "y": 270
+    }
+  }
+}

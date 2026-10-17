@@ -1,0 +1,22 @@
+{
+  "type": "botania:terrestrial_agglomeration_plate",
+  "ingredients": [
+    {
+      "item": "botania:manasteel_ingot"
+    },
+    {
+      "item": "minecraft:glass"
+    },
+    {
+      "item": "minecraft:glass"
+    },
+    {
+      "item": "botania:elementium_ingot"
+    }
+  ],
+  "mana": 250000,
+  "result": {
+    "id": "botanicalextramachinery:crystal_ingot",
+    "count": 1
+  }
+}

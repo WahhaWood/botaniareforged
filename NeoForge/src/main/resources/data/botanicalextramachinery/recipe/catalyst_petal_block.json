@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "botanicalextramachinery:catalyst_petal"
+    },
+    {
+      "item": "minecraft:diamond_block"
+    }
+  ],
+  "result": {
+    "id": "botanicalextramachinery:catalyst_petal_block",
+    "count": 1
+  },
+  "show_notification": true
+}

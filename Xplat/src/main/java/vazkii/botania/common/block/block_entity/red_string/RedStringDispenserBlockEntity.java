@@ -1,0 +1,40 @@
+/*
+ * This class is distributed as part of the Botania Mod.
+ * Get the Source Code in github:
+ * https://github.com/Vazkii/Botania
+ *
+ * Botania is Open Source and distributed under the
+ * Botania License: http://botaniamod.net/license.php
+ */
+package vazkii.botania.common.block.block_entity.red_string;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.CrafterBlockEntity;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+
+import vazkii.botania.common.block.block_entity.BotaniaBlockEntities;
+
+public class RedStringDispenserBlockEntity extends RedStringContainerBlockEntity {
+	public RedStringDispenserBlockEntity(BlockPos pos, BlockState state) {
+		super(BotaniaBlockEntities.RED_STRINGED_DISPENSER, pos, state);
+	}
+
+	@Override
+	public boolean acceptBlock(BlockPos pos) {
+		BlockEntity blockEntity = level.getBlockEntity(pos);
+		return blockEntity instanceof DispenserBlockEntity || blockEntity instanceof CrafterBlockEntity;
+	}
+
+	public void tickDispenser() {
+		BlockPos bind = getBinding();
+		if (bind != null) {
+			BlockEntity tile = level.getBlockEntity(bind);
+			if (tile instanceof DispenserBlockEntity || tile instanceof CrafterBlockEntity) {
+				level.scheduleTick(bind, tile.getBlockState().getBlock(), 4);
+			}
+		}
+	}
+
+}

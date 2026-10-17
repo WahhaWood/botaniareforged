@@ -1,0 +1,20 @@
+{
+  "itemGroup.voltany": "Voltany",
+  "block.voltany.mana_generator": "Mana Generator",
+  "item.voltany.overclock_1": "Overclock I",
+  "item.voltany.overclock_2": "Overclock II",
+  "item.voltany.overclock_3": "Overclock III",
+  "item.voltany.dispersion_1": "Mana Dispersion I",
+  "item.voltany.dispersion_2": "Mana Dispersion II",
+  "item.voltany.dispersion_3": "Mana Dispersion III",
+  "item.voltany.efficiency_core": "Efficiency Core",
+  "item.voltany.spark_resonator": "Spark Resonator",
+  "tooltip.voltany.upgrade.overclock_1": "+50% mana generation",
+  "tooltip.voltany.upgrade.overclock_2": "+100% mana generation",
+  "tooltip.voltany.upgrade.overclock_3": "+100% mana generation; flower slot stacks up to 8",
+  "tooltip.voltany.upgrade.dispersion_1": "Sends mana to all pools within 5 blocks",
+  "tooltip.voltany.upgrade.dispersion_2": "Sends mana to all pools within 15 blocks",
+  "tooltip.voltany.upgrade.dispersion_3": "Sends mana to all pools within 30 blocks",
+  "tooltip.voltany.upgrade.efficiency": "Lower FE cost per mana",
+  "tooltip.voltany.upgrade.spark": "Feeds mana into the Spark network"
+}

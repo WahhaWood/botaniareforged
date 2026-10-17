@@ -1,0 +1,81 @@
+/*
+ * This class is distributed as part of the Botania Mod.
+ * Get the Source Code in github:
+ * https://github.com/Vazkii/Botania
+ *
+ * Botania is Open Source and distributed under the
+ * Botania License: http://botaniamod.net/license.php
+ */
+package vazkii.botania.common.crafting.recipe;
+
+import net.minecraft.core.HolderLookup;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.item.crafting.CustomRecipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;
+import net.minecraft.world.level.Level;
+
+import vazkii.botania.api.item.PhantomInkable;
+import vazkii.botania.common.item.BotaniaItems;
+
+public class PhantomInkRecipe extends CustomRecipe {
+	public static final RecipeSerializer<PhantomInkRecipe> SERIALIZER = new SimpleCraftingRecipeSerializer<>(PhantomInkRecipe::new);
+
+	public PhantomInkRecipe(CraftingBookCategory craftingBookCategory) {
+		super(craftingBookCategory);
+	}
+
+	@Override
+	public boolean matches(CraftingInput var1, Level var2) {
+		boolean foundInk = false;
+		boolean foundItem = false;
+
+		for (int i = 0; i < var1.size(); i++) {
+			ItemStack stack = var1.getItem(i);
+			if (!stack.isEmpty()) {
+				if (stack.is(BotaniaItems.PHANTOM_INK) && !foundInk) {
+					foundInk = true;
+				} else if (!foundItem) {
+					if (stack.getItem() instanceof PhantomInkable && !stack.getItem().hasCraftingRemainingItem()) {
+						foundItem = true;
+					} else {
+						return false;
+					}
+				} else {
+					return false;
+				}
+			}
+		}
+
+		return foundInk && foundItem;
+	}
+
+	@Override
+	public ItemStack assemble(CraftingInput inv, HolderLookup.Provider registries) {
+		ItemStack item = ItemStack.EMPTY;
+
+		for (int i = 0; i < inv.size(); i++) {
+			ItemStack stack = inv.getItem(i);
+			if (!stack.isEmpty() && stack.getItem() instanceof PhantomInkable && item.isEmpty()) {
+				item = stack;
+			}
+		}
+
+		PhantomInkable inkable = (PhantomInkable) item.getItem();
+		ItemStack copy = item.copy();
+		inkable.setPhantomInk(copy, !inkable.hasPhantomInk(item));
+		return copy;
+	}
+
+	@Override
+	public boolean canCraftInDimensions(int width, int height) {
+		return width * height >= 2;
+	}
+
+	@Override
+	public RecipeSerializer<?> getSerializer() {
+		return SERIALIZER;
+	}
+}

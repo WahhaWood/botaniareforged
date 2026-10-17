@@ -1,0 +1,19 @@
+{
+  "type": "botania:terrestrial_agglomeration_plate",
+  "ingredients": [
+    {
+      "item": "botanicalextramachinery:malachite_ingot"
+    },
+    {
+      "item": "botania:gaia_ingot"
+    },
+    {
+      "item": "botania:terrasteel_block"
+    }
+  ],
+  "mana": 1000000,
+  "result": {
+    "id": "botanicalextramachinery:saffron_ingot",
+    "count": 1
+  }
+}

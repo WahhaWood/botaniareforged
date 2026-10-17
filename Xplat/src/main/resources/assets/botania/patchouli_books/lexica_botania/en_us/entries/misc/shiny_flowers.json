@@ -1,0 +1,64 @@
+{
+  "name": "botania.entry.shinyFlowers",
+  "category": "botania:misc",
+  "icon": "botania:white_glimmering_flower",
+  "advancement": "botania:main/mana_pool_pickup_lexicon",
+  "pages": [
+    {
+      "type": "text",
+      "text": "botania.page.shinyFlowers0"
+    },
+    {
+      "type": "text",
+      "text": "botania.page.shinyFlowers3"
+    },
+    {
+      "anchor": "shiny",
+      "type": "botania:crafting_multi",
+      "heading": "botania.page.shinyFlowers4",
+      "text": "botania.page.shinyFlowers1",
+      "recipes": [
+        "botania:white_glimmering_flower",
+        "botania:orange_glimmering_flower",
+        "botania:magenta_glimmering_flower",
+        "botania:light_blue_glimmering_flower",
+        "botania:yellow_glimmering_flower",
+        "botania:lime_glimmering_flower",
+        "botania:pink_glimmering_flower",
+        "botania:gray_glimmering_flower",
+        "botania:light_gray_glimmering_flower",
+        "botania:cyan_glimmering_flower",
+        "botania:purple_glimmering_flower",
+        "botania:blue_glimmering_flower",
+        "botania:brown_glimmering_flower",
+        "botania:green_glimmering_flower",
+        "botania:red_glimmering_flower",
+        "botania:black_glimmering_flower"
+      ]
+    },
+    {
+      "anchor": "floating",
+      "type": "botania:crafting_multi",
+      "heading": "botania.page.shinyFlowers5",
+      "text": "botania.page.shinyFlowers2",
+      "recipes": [
+        "botania:white_floating_flower",
+        "botania:orange_floating_flower",
+        "botania:magenta_floating_flower",
+        "botania:light_blue_floating_flower",
+        "botania:yellow_floating_flower",
+        "botania:lime_floating_flower",
+        "botania:pink_floating_flower",
+        "botania:gray_floating_flower",
+        "botania:light_gray_floating_flower",
+        "botania:cyan_floating_flower",
+        "botania:purple_floating_flower",
+        "botania:blue_floating_flower",
+        "botania:brown_floating_flower",
+        "botania:green_floating_flower",
+        "botania:red_floating_flower",
+        "botania:black_floating_flower"
+      ]
+    }
+  ]
+}

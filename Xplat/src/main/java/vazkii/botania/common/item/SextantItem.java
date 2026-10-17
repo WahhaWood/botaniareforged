@@ -1,0 +1,434 @@
+/*
+ * This class is distributed as part of the Botania Mod.
+ * Get the Source Code in github:
+ * https://github.com/Vazkii/Botania
+ *
+ * Botania is Open Source and distributed under the
+ * Botania License: http://botaniamod.net/license.php
+ */
+package vazkii.botania.common.item;
+
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
+
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.GlobalPos;
+import net.minecraft.core.Vec3i;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemUtils;
+import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
+
+import vazkii.botania.client.fx.WispParticleData;
+import vazkii.botania.common.component.BotaniaDataComponents;
+import vazkii.botania.common.handler.BotaniaSounds;
+import vazkii.botania.common.helper.VecHelper;
+import vazkii.botania.common.item.equipment.tool.ToolCommons;
+import vazkii.botania.common.proxy.Proxy;
+import vazkii.patchouli.api.IMultiblock;
+import vazkii.patchouli.api.IStateMatcher;
+import vazkii.patchouli.api.PatchouliAPI;
+import vazkii.patchouli.common.multiblock.SparseMultiblock;
+
+import java.math.RoundingMode;
+import java.text.NumberFormat;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Stream;
+
+import static vazkii.botania.api.BotaniaAPI.botaniaRL;
+
+public class SextantItem extends Item {
+	public static final ResourceLocation MULTIBLOCK_ID = botaniaRL("worldshapers_sextant");
+	private static final int MAX_RADIUS = 256;
+
+	public SextantItem(Properties builder) {
+		super(builder);
+	}
+
+	@Override
+	public UseAnim getUseAnimation(ItemStack stack) {
+		return UseAnim.BOW;
+	}
+
+	@Override
+	public int getUseDuration(ItemStack stack, LivingEntity entity) {
+		return 72000;
+	}
+
+	@Override
+	public void onUseTick(Level world, LivingEntity living, ItemStack stack, int count) {
+		if (getUseDuration(stack, living) - count < 10
+				|| !(living instanceof Player)
+				|| !world.isClientSide) {
+			return;
+		}
+
+		GlobalPos centerPos = stack.get(BotaniaDataComponents.BINDING_POS);
+		if (centerPos != null && centerPos.dimension() == world.dimension()) {
+			double radius = calculateRadius(stack, living);
+			WispParticleData data = WispParticleData.wisp(0.3F, 0F, 1F, 1F, 1);
+			world.addParticle(data,
+					centerPos.pos().getX() + 0.5, centerPos.pos().getY() + 1, centerPos.pos().getZ() + 0.5,
+					0, 0.1, 0);
+			var visualizer = getMode(stack).getVisualizer();
+			for (int i = count % 20; i < 360; i += 20) {
+				float radian = (float) (i * Math.PI / 180);
+				double cosR = Math.cos(radian) * radius;
+				double sinR = Math.sin(radian) * radius;
+				visualizer.visualize(world, centerPos.pos().getX(), centerPos.pos().getY(), centerPos.pos().getZ(), data, cosR, sinR);
+			}
+		}
+	}
+
+	/**
+	 * Big workaround to Patchouli's render range limitation for multiblocks. The player needs to stay within 64 blocks
+	 * of the multiblock's anchor point, or it stops being visible entirely. To get around that limitation, we move the
+	 * anchor point when it gets too far from the player, but also apply an opposite offset so the multiblock is still
+	 * rendered where it's supposed to be.
+	 */
+	@Override
+	public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
+		if (!level.isClientSide() || !(entity instanceof LocalPlayer)) {
+			return;
+		}
+		GlobalPos centerPos = stack.get(BotaniaDataComponents.BINDING_POS);
+		if (centerPos == null || centerPos.dimension() != level.dimension()) {
+			return;
+		}
+		IMultiblock mb = PatchouliAPI.get().getCurrentMultiblock();
+		if (!(mb instanceof SparseMultiblock smb) || !mb.getID().equals(MULTIBLOCK_ID)) {
+			return;
+		}
+		BlockPos anchor = Proxy.INSTANCE.getMultiblockAnchor();
+		if (anchor == null) {
+			return;
+		}
+		Vec3i sizeVec = mb.getSize();
+		int size = Math.max(sizeVec.getX(), Math.max(sizeVec.getY(), sizeVec.getZ()));
+		BlockPos center = centerPos.pos();
+		BlockPos playerPos = entity.blockPosition();
+		double distToCenter = center.distSqr(playerPos);
+		double distToAnchor = anchor.distSqr(playerPos);
+		if (distToAnchor < 32 * 32 || distToCenter > (double) (size * size / 2)) {
+			return;
+		}
+
+		// we are reasonably far from the current anchor position, but still close enough to the actual center
+		BlockPos newOffset = playerPos.subtract(center);
+		smb.setOffset(newOffset.getX(), newOffset.getY(), newOffset.getZ());
+		Proxy.INSTANCE.setMultiblockAnchor(playerPos);
+	}
+
+	private static void visualizeSphere(Level world, int x, int y, int z, WispParticleData data, double cosR, double sinR) {
+		world.addParticle(data, x + cosR + 0.5, y + 1.3, z + sinR + 0.5, 0, 0.01, 0);
+		world.addParticle(data, x + sinR + 0.5, y + cosR + 1.5, z + 0.3, 0, 0, 0.01);
+		world.addParticle(data, x + 0.3, y + sinR + 1.5, z + cosR + 0.5, 0.01, 0, 0);
+	}
+
+	private static ShapeVisualizer createCircleVisualizer(Direction.Axis axis) {
+		return switch (axis) {
+			case X -> (world, x, y, z, data, cosR, sinR) -> world
+					.addParticle(data, x + 0.3, y + sinR + 1.5, z + cosR + 0.5, 0.01, 0, 0);
+			case Y -> (world, x, y, z, data, cosR, sinR) -> world
+					.addParticle(data, x + cosR + 0.5, y + 1, z + sinR + 0.5, 0, 0.01, 0);
+			case Z -> (world, x, y, z, data, cosR, sinR) -> world
+					.addParticle(data, x + sinR + 0.5, y + cosR + 1.5, z + 0.3, 0, 0, 0.01);
+		};
+	}
+
+	private static void makeSphere(IStateMatcher matcher, double radius, Map<BlockPos, IStateMatcher> map) {
+		// 3D version of Midpoint circle algorithm, based on https://stackoverflow.com/a/41666156/1331011
+		// This algorithm generates all combinations of X, Y, and Z components, where:
+		// - the X/Y/Z position is inside the sphere,
+		// - Z has the greatest (or tied for greatest) value of the three components,
+		// - making Z any larger would place the position outside the sphere, and
+		// - X, Y, and Z are all positive or zero.
+		final int maxR2 = (int) Math.floor(radius * radius);
+		int zMax = (int) Math.floor(radius);
+		for (int x = 0;; x++) {
+			while (x * x + zMax * zMax > maxR2 && zMax >= x) {
+				zMax--;
+			}
+			if (zMax < x) {
+				break; // with this x, z can't be largest
+			}
+			int z = zMax;
+			for (int y = 0;; y++) {
+				while (x * x + y * y + z * z > maxR2 && z >= x && z >= y) {
+					z--;
+				}
+				if (z < x || z < y) {
+					break; // with this x and y, z can't be largest
+				}
+				// By rotating the components and mirroring the resulting positions to the other seven octants,
+				// each set of values generates up to 24 blocks of the sphere.
+				generateMirroredPositions(x, y, z, map, matcher);
+				//noinspection SuspiciousNameCombination
+				generateMirroredPositions(y, z, x, map, matcher);
+				//noinspection SuspiciousNameCombination
+				generateMirroredPositions(z, x, y, map, matcher);
+			}
+		}
+	}
+
+	private static void generateMirroredPositions(int x, int y, int z, Map<BlockPos, IStateMatcher> map, IStateMatcher matcher) {
+		Stream.of(
+				new BlockPos(x, y, z), new BlockPos(-x, y, z),
+				new BlockPos(x, -y, z), new BlockPos(-x, -y, z),
+				new BlockPos(x, y, -z), new BlockPos(-x, y, -z),
+				new BlockPos(x, -y, -z), new BlockPos(-x, -y, -z)
+		).forEach(pos -> map.put(pos, matcher));
+	}
+
+	@Override
+	public void releaseUsing(ItemStack stack, Level world, LivingEntity living, int time) {
+		if (!(living instanceof Player)) {
+			return;
+		}
+
+		double radius = calculateRadius(stack, living);
+		if (1 < radius && radius <= MAX_RADIUS) {
+			IStateMatcher matcher = PatchouliAPI.get().predicateMatcher(Blocks.COBBLESTONE, s -> !s.isAir());
+			GlobalPos centerPos = stack.get(BotaniaDataComponents.BINDING_POS);
+			if (centerPos != null && centerPos.dimension() == world.dimension()) {
+				Map<BlockPos, IStateMatcher> map = new HashMap<>();
+				getMode(stack).getCreator().create(matcher, radius + 0.5, map);
+				IMultiblock sparse = PatchouliAPI.get().makeSparseMultiblock(map).setId(MULTIBLOCK_ID)
+						.setSymmetrical(true);
+				Proxy.INSTANCE.showMultiblock(sparse, Component.literal("r = " + getRadiusString(radius)),
+						centerPos.pos(), Rotation.NONE);
+			}
+		}
+	}
+
+	private static ShapeCreator defineCircleShapeCreator(Direction axis1, Direction axis2) {
+		return (IStateMatcher matcher, double radius, Map<BlockPos, IStateMatcher> map) -> {
+			// 2D version of makeSphere, assuming y=0 at all times
+			final int maxR2 = (int) Math.floor(radius * radius);
+			int z = (int) Math.floor(radius);
+			for (int x = 0;; x++) {
+				while (x * x + z * z > maxR2 && z >= x) {
+					z--;
+				}
+				if (z < x) {
+					break;
+				}
+				generateMirroredPositions(axis1.getNormal(), axis2.getNormal(), x, z, map, matcher);
+				generateMirroredPositions(axis1.getNormal(), axis2.getNormal(), z, x, map, matcher);
+			}
+		};
+	}
+
+	private static void generateMirroredPositions(Vec3i normal1, Vec3i normal2, int offset1, int offset2,
+			Map<BlockPos, IStateMatcher> map, IStateMatcher matcher) {
+		Stream.of(
+				new BlockPos(normal1.multiply(offset1).offset(normal2.multiply(offset2))),
+				new BlockPos(normal1.multiply(-offset1).offset(normal2.multiply(offset2))),
+				new BlockPos(normal1.multiply(offset1).offset(normal2.multiply(-offset2))),
+				new BlockPos(normal1.multiply(-offset1).offset(normal2.multiply(-offset2)))
+		).forEach(pos -> map.put(pos, matcher));
+	}
+
+	private static SextantMode getMode(ItemStack stack) {
+		String modeString = stack.getOrDefault(BotaniaDataComponents.SEXTANT_MODE, SextantMode.CIRCLE_FLAT.getKey());
+		return Arrays.stream(SextantMode.values()).filter(m -> m.getKey().equals(modeString)).findFirst()
+				.orElse(SextantMode.CIRCLE_FLAT);
+	}
+
+	private void reset(Level world, Player player, ItemStack stack) {
+		if (!stack.has(BotaniaDataComponents.BINDING_POS)) {
+			if (!world.isClientSide) {
+				SextantMode currentMode = getMode(stack);
+				int numModes = SextantMode.values().length;
+				int nextMode = currentMode.ordinal() + 1;
+				setMode(stack, SextantMode.values()[nextMode >= numModes ? 0 : nextMode]);
+			} else {
+				player.playSound(BotaniaSounds.DING, 0.1F, 1F);
+			}
+		} else {
+			stack.remove(BotaniaDataComponents.BINDING_POS);
+		}
+		if (world.isClientSide) {
+			Proxy.INSTANCE.clearSextantMultiblock();
+		}
+	}
+
+	private static void setMode(ItemStack stack, SextantMode mode) {
+		stack.set(BotaniaDataComponents.SEXTANT_MODE, mode.getKey());
+	}
+
+	@Override
+	public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
+		ItemStack stack = player.getItemInHand(hand);
+		if (!player.isSecondaryUseActive()) {
+			BlockHitResult rtr = ToolCommons.raytraceFromEntity(player, 128, false);
+			if (rtr.getType() == HitResult.Type.BLOCK) {
+				if (!world.isClientSide) {
+					BlockPos pos = rtr.getBlockPos();
+					stack.set(BotaniaDataComponents.BINDING_POS, GlobalPos.of(world.dimension(), pos));
+				}
+				return ItemUtils.startUsingInstantly(world, player, hand);
+			}
+			return InteractionResultHolder.pass(stack);
+		} else {
+			reset(world, player, stack);
+			return InteractionResultHolder.success(stack);
+		}
+	}
+
+	private static double calculateRadius(ItemStack stack, LivingEntity living) {
+		GlobalPos pos = stack.getOrDefault(BotaniaDataComponents.BINDING_POS,
+				GlobalPos.of(living.level().dimension(), BlockPos.ZERO));
+		Vec3 source = pos.pos().getCenter();
+
+		Vec3 centerVec = VecHelper.fromEntityCenter(living);
+		Vec3 diffVec = source.subtract(centerVec);
+		Vec3 lookVec = living.getLookAngle();
+		Direction.Axis sizingAxis = getMode(stack).getSizingAxis();
+		double mul = sizingAxis.choose(diffVec.x, diffVec.y, diffVec.z) / sizingAxis.choose(lookVec.x, lookVec.y, lookVec.z);
+		lookVec = lookVec.scale(mul).add(centerVec);
+
+		lookVec = new Vec3(net.minecraft.util.Mth.floor(lookVec.x) + 0.5,
+				net.minecraft.util.Mth.floor(lookVec.y) + 0.5,
+				net.minecraft.util.Mth.floor(lookVec.z) + 0.5);
+
+		return lookVec.subtract(source).length();
+	}
+
+	@Override
+	public Component getName(ItemStack stack) {
+		Component mode = Component.translatable(getModeString(stack));
+		Component name = super.getName(stack);
+		return Component.translatable("botaniamisc.template.parenthesis_suffix", name, mode).withStyle(name.getStyle());
+	}
+
+	public static String getModeString(ItemStack stack) {
+		return "botaniamisc.sextantMode." + getMode(stack).getKey();
+	}
+
+	private static String getRadiusString(double radius) {
+		NumberFormat format = getNumberFormat();
+
+		return format.format(radius);
+	}
+
+	private static NumberFormat getNumberFormat() {
+		var format = NumberFormat.getInstance(Proxy.INSTANCE.getLocale());
+		format.setRoundingMode(RoundingMode.HALF_UP);
+		format.setMaximumFractionDigits(1);
+		format.setMinimumFractionDigits(1);
+		return format;
+	}
+
+	public static class Hud {
+		public static void render(GuiGraphics gui, Player player, ItemStack stack) {
+			PoseStack ms = gui.pose();
+			ItemStack onUse = player.getUseItem();
+			int time = player.getUseItemRemainingTicks();
+
+			if (onUse == stack && stack.getItem().getUseDuration(stack, player) - time >= 10) {
+				double radius = calculateRadius(stack, player);
+				Font font = Minecraft.getInstance().font;
+				int x = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 30;
+				int y = Minecraft.getInstance().getWindow().getGuiScaledHeight() / 2;
+
+				String s = getRadiusString(radius);
+				boolean inRange = 0 < radius && radius <= MAX_RADIUS;
+				if (!inRange) {
+					s = ChatFormatting.RED + s;
+				}
+
+				gui.drawString(font, s, x - font.width(s) / 2, y - 4, 0xFFFFFF);
+
+				if (inRange) {
+					radius += 4;
+					RenderSystem.lineWidth(3F);
+					Tesselator.getInstance().begin(VertexFormat.Mode.LINE_STRIP, DefaultVertexFormat.POSITION);
+					RenderSystem.setShaderColor(0F, 1F, 1F, 1F);
+					for (int i = 0; i < 361; i++) {
+						float radian = (float) (i * Math.PI / 180);
+						float xp = x + net.minecraft.util.Mth.cos(radian) * (float) radius;
+						float yp = y + net.minecraft.util.Mth.sin(radian) * (float) radius;
+						Tesselator.getInstance().begin(VertexFormat.Mode.LINE_STRIP, DefaultVertexFormat.POSITION).addVertex(ms.last().pose(), xp, yp, 0);
+					}
+					//todo Tesselator.getInstance().end();
+				}
+			}
+		}
+	}
+
+	@FunctionalInterface
+	public interface ShapeCreator {
+		void create(IStateMatcher matcher, double radius, Map<BlockPos, IStateMatcher> map);
+	}
+
+	@FunctionalInterface
+	public interface ShapeVisualizer {
+		void visualize(Level world, int x, int y, int z, WispParticleData data, double cosR, double sinR);
+	}
+
+	public enum SextantMode {
+		CIRCLE_FLAT("circle", Direction.Axis.Y, SextantItem.defineCircleShapeCreator(
+				Direction.get(Direction.AxisDirection.POSITIVE, Direction.Axis.X),
+				Direction.get(Direction.AxisDirection.POSITIVE, Direction.Axis.Z)), createCircleVisualizer(Direction.Axis.Y)),
+		CIRCLE_X("circle_x", Direction.Axis.X, SextantItem.defineCircleShapeCreator(
+				Direction.get(Direction.AxisDirection.POSITIVE, Direction.Axis.Y),
+				Direction.get(Direction.AxisDirection.POSITIVE, Direction.Axis.Z)), createCircleVisualizer(Direction.Axis.X)),
+		CIRCLE_Z("circle_z", Direction.Axis.Z, SextantItem.defineCircleShapeCreator(
+				Direction.get(Direction.AxisDirection.POSITIVE, Direction.Axis.X),
+				Direction.get(Direction.AxisDirection.POSITIVE, Direction.Axis.Y)), createCircleVisualizer(Direction.Axis.Z)),
+		SPHERE("sphere", Direction.Axis.Y, SextantItem::makeSphere, SextantItem::visualizeSphere);
+
+		private final String key;
+		private final Direction.Axis sizingAxis;
+		private final ShapeCreator creator;
+		private final ShapeVisualizer visualizer;
+
+		SextantMode(String key, Direction.Axis sizingAxis, ShapeCreator creator, ShapeVisualizer visualizer) {
+			this.key = key;
+			this.sizingAxis = sizingAxis;
+			this.creator = creator;
+			this.visualizer = visualizer;
+		}
+
+		public String getKey() {
+			return key;
+		}
+
+		public Direction.Axis getSizingAxis() {
+			return sizingAxis;
+		}
+
+		public ShapeCreator getCreator() {
+			return creator;
+		}
+
+		public ShapeVisualizer getVisualizer() {
+			return visualizer;
+		}
+	}
+}

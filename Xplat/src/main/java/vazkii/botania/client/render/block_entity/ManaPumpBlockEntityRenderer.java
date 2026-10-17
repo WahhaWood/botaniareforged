@@ -1,0 +1,71 @@
+/*
+ * This class is distributed as part of the Botania Mod.
+ * Get the Source Code in github:
+ * https://github.com/Vazkii/Botania
+ *
+ * Botania is Open Source and distributed under the
+ * Botania License: http://botaniamod.net/license.php
+ */
+package vazkii.botania.client.render.block_entity;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+
+import vazkii.botania.common.block.block_entity.mana.ManaPumpBlockEntity;
+import vazkii.botania.common.helper.VecHelper;
+import vazkii.botania.xplat.ClientXplatAbstractions;
+
+import java.util.Objects;
+
+import static vazkii.botania.api.BotaniaAPI.botaniaRL;
+
+public class ManaPumpBlockEntityRenderer implements BlockEntityRenderer<ManaPumpBlockEntity> {
+	public static final ResourceLocation PUMP_HEAD_ID = botaniaRL("block/mana_pump_head");
+
+	private final BlockRenderDispatcher blockRenderDispatcher;
+
+	public ManaPumpBlockEntityRenderer(BlockEntityRendererProvider.Context ctx) {
+		this.blockRenderDispatcher = ctx.getBlockRenderDispatcher();
+	}
+
+	@Override
+	public void render(ManaPumpBlockEntity pump, float partialTicks, PoseStack ms, MultiBufferSource buffers, int light, int overlay) {
+		ms.pushPose();
+		ms.translate(0.5, 0, 0.5);
+		float angle = 0;
+		switch (pump.getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING)) {
+			case SOUTH:
+				angle = 180;
+				break;
+			case EAST:
+				angle = -90;
+				break;
+			case WEST:
+				angle = 90;
+				break;
+			case NORTH:
+			default:
+				break;
+		}
+		ms.mulPose(VecHelper.rotateY(angle));
+		ms.translate(-0.5, 0, -0.5);
+		double diff = Math.max(0F, Math.min(8F, pump.innerRingPos + pump.moving * partialTicks));
+		ms.translate(0, 0, diff / 14);
+		VertexConsumer buffer = buffers.getBuffer(RenderType.solid());
+		blockRenderDispatcher.getModelRenderer().renderModel(ms.last(), buffer, null, getHeadModel(), 1, 1, 1, light, overlay);
+		ms.popPose();
+	}
+
+	private BakedModel getHeadModel() {
+		return Objects.requireNonNull(ClientXplatAbstractions.instance().getResourceModel(PUMP_HEAD_ID));
+	}
+}

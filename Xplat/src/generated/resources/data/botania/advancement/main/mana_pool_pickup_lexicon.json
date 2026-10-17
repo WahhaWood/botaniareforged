@@ -1,0 +1,35 @@
+{
+  "parent": "botania:main/root",
+  "criteria": {
+    "elven_lexicon": {
+      "conditions": {
+        "items": [
+          {
+            "components": {
+              "botania:elven_unlock": {}
+            },
+            "items": "botania:lexica_botania"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "pickup": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#botania:all_mana_pools"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "pickup",
+      "elven_lexicon"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

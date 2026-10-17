@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "botanicalextramachinery:malachite_ingot"
+    },
+    {
+      "item": "botanicalextramachinery:upgrade_storage_energy_1"
+    },
+    {
+      "item": "botania:manasteel_ingot"
+    }
+  ],
+  "result": {
+    "id": "botanicalextramachinery:upgrade_storage_energy_2",
+    "count": 1
+  },
+  "show_notification": true
+}

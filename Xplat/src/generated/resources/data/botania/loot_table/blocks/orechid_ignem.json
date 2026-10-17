@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:copy_components",
+              "include": [
+                "botania:cooldown"
+              ],
+              "source": "block_entity"
+            }
+          ],
+          "name": "botania:orechid_ignem"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}

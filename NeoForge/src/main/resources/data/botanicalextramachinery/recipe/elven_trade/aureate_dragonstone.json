@@ -1,0 +1,16 @@
+{
+  "type": "botania:elven_trade",
+  "ingredients": [
+    {
+      "item": "botanicalextramachinery:aureate_ingot"
+    },
+    {
+      "item": "botanicalextramachinery:crimson_dragonstone"
+    }
+  ],
+  "output": [
+    {
+      "id": "botanicalextramachinery:aureate_dragonstone"
+    }
+  ]
+}

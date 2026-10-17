@@ -1,0 +1,117 @@
+/*
+ * This class is distributed as part of the Botania Mod.
+ * Get the Source Code in github:
+ * https://github.com/Vazkii/Botania
+ *
+ * Botania is Open Source and distributed under the
+ * Botania License: http://botaniamod.net/license.php
+ */
+package vazkii.botania.common.block.mana;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+
+import org.jetbrains.annotations.Nullable;
+
+import vazkii.botania.api.block.RedstoneSensitiveBlock;
+import vazkii.botania.api.state.BotaniaStateProperties;
+import vazkii.botania.common.block.BotaniaWaterloggedBlock;
+import vazkii.botania.common.block.block_entity.BotaniaBlockEntities;
+import vazkii.botania.common.block.block_entity.mana.ManaPumpBlockEntity;
+
+public class ManaPumpBlock extends BotaniaWaterloggedBlock implements EntityBlock, RedstoneSensitiveBlock {
+
+	private static final VoxelShape X_SHAPE = box(0, 0, 4, 16, 8, 12);
+	private static final VoxelShape Z_SHAPE = box(4, 0, 0, 12, 8, 16);
+
+	public ManaPumpBlock(Properties builder) {
+		super(builder);
+		registerDefaultState(defaultBlockState()
+				.setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.SOUTH)
+				.setValue(BlockStateProperties.POWERED, false)
+				.setValue(BotaniaStateProperties.ACTIVE, false));
+	}
+
+	@Override
+	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+		super.createBlockStateDefinition(builder);
+		builder.add(BlockStateProperties.HORIZONTAL_FACING, BlockStateProperties.POWERED, BotaniaStateProperties.ACTIVE);
+	}
+
+	@Override
+	public BlockState getStateForPlacement(BlockPlaceContext context) {
+		return RedstoneSensitiveBlock.getPoweredStateForPlacement(super.getStateForPlacement(context), context)
+				.setValue(BlockStateProperties.HORIZONTAL_FACING, context.getHorizontalDirection().getOpposite());
+	}
+
+	@Override
+	public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos,
+			boolean movedByPiston) {
+		RedstoneSensitiveBlock.updateRedstonePower(state, level, pos);
+	}
+
+	@Override
+	public BlockState mirror(BlockState state, Mirror mirror) {
+		return state.setValue(BlockStateProperties.HORIZONTAL_FACING,
+				mirror.mirror(state.getValue(BlockStateProperties.HORIZONTAL_FACING)));
+	}
+
+	@Override
+	public BlockState rotate(BlockState state, Rotation rotation) {
+		return state.setValue(BlockStateProperties.HORIZONTAL_FACING,
+				rotation.rotate(state.getValue(BlockStateProperties.HORIZONTAL_FACING)));
+	}
+
+	@Override
+	public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
+		if (state.getValue(BlockStateProperties.HORIZONTAL_FACING).getAxis() == Direction.Axis.X) {
+			return X_SHAPE;
+		} else {
+			return Z_SHAPE;
+		}
+	}
+
+	@Override
+	public boolean hasAnalogOutputSignal(BlockState state) {
+		return true;
+	}
+
+	@Override
+	public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+		return level.getBlockEntity(pos) instanceof ManaPumpBlockEntity pump ? pump.comparator : 0;
+	}
+
+	@Override
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+		return new ManaPumpBlockEntity(pos, state);
+	}
+
+	@Nullable
+	@Override
+	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+		return createTickerHelper(type, BotaniaBlockEntities.MANA_PUMP, ManaPumpBlockEntity::commonTick);
+	}
+
+	@Override
+	public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
+		if (isPowered(state)) {
+			RedstoneSensitiveBlock.redstoneParticlesInShape(state, level, pos, random);
+		}
+	}
+}

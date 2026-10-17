@@ -1,0 +1,7 @@
+{
+  "parent": "voltany:block/mana_generator",
+  "textures": {
+    "0": "voltany:block/mana_gen_on",
+    "particle": "voltany:block/mana_gen_on"
+  }
+}

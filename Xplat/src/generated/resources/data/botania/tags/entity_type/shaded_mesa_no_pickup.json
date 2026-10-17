@@ -1,0 +1,29 @@
+{
+  "values": [
+    "minecraft:ender_dragon",
+    "minecraft:wither",
+    "minecraft:item_frame",
+    "minecraft:glow_item_frame",
+    "minecraft:end_crystal",
+    "minecraft:painting",
+    "minecraft:command_block_minecart",
+    "minecraft:marker",
+    "minecraft:area_effect_cloud",
+    "minecraft:evoker_fangs",
+    "minecraft:leash_knot",
+    "minecraft:block_display",
+    "minecraft:item_display",
+    "minecraft:text_display",
+    "minecraft:interaction",
+    "minecraft:marker",
+    "botania:corporea_spark",
+    "botania:gaia_guardian",
+    "botania:flame_ring",
+    "botania:gaia_trap",
+    "botania:magic_missile",
+    "botania:mana_burst",
+    "botania:pink_wither",
+    "botania:mana_spark",
+    "botania:luminizer_beam"
+  ]
+}

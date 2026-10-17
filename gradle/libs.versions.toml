@@ -1,0 +1,68 @@
+[versions]
+# see https://projects.neoforged.net/neoforged/moddevgradle for new versions
+mdg = "2.0.142"
+
+# we need to manually depend on mixin (+extras) in Xplat
+mixin = "0.15.2+mixin.0.8.7"
+mixin-extras = "0.4.1"
+
+jetbrains-annotations = "26.1.0"
+
+# Mods
+patchouli-xplat = "1.21.1-92"
+patchouli-neoforge = "1.21.1-92-NEOFORGE" # TODO: is there a good way to define these programatically?
+
+emi = "1.1.24+1.21.1"
+jei = "19.27.0.340"
+rei = "16.0.799"
+
+curios = "9.5.1+1.21.1"
+kubejs = "2101.7.2-build.379"
+ae2 = "19.2.17"
+
+ears = "1.4.7"
+sodium-neoforge = "mc1.21.1-0.6.13-neoforge"
+embeddium = "1.0.15+mc1.21.1"
+
+# plugins
+spotless = "7.0.2"
+
+[libraries]
+mixin = { module = "net.fabricmc:sponge-mixin", version.ref = "mixin" }
+mixin-extras = { module = "io.github.llamalad7:mixinextras-common", version.ref = "mixin-extras" }
+
+jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref = "jetbrains-annotations" }
+
+# Patchouli
+patchouli-xplat = { module = "vazkii.patchouli:Patchouli-xplat", version.ref = "patchouli-xplat" }
+patchouli-neoforge = { module = "vazkii.patchouli:Patchouli", version.ref = "patchouli-neoforge" }
+
+# EMI
+emi-xplat = { module = "dev.emi:emi-xplat-mojmap", version.ref = "emi" }
+emi-neoforge = { module = "dev.emi:emi-neoforge", version.ref = "emi" }
+
+# JEI
+# TODO: requiring a version number in the artifact ID is suboptimal
+jei-common-api = { module = "mezz.jei:jei-1.21.1-common-api", version.ref = "jei" }
+jei-neoforge-full = { module = "mezz.jei:jei-1.21.1-neoforge", version.ref = "jei" }
+jei-neoforge-api = { module = "mezz.jei:jei-1.21.1-neoforge-api", version.ref = "jei" }
+
+# REI
+# (no Xplat/Common definition for REI, since it's Intermediary and thus useless to our Xplat module)
+rei-neoforge = { module = "me.shedaniel:RoughlyEnoughItems-neoforge", version.ref = "rei" }
+
+# other mods
+curios = { module = "top.theillusivec4.curios:curios-neoforge", version.ref = "curios" }
+kubejs-neoforge = { module = "dev.latvian.mods:kubejs-neoforge", version.ref = "kubejs" }
+ae2 = { module = "org.appliedenergistics:appliedenergistics2", version.ref = "ae2" }
+ears = { module = "com.unascribed:ears-api", version.ref = "ears" }
+sodium-neoforge = { module = "maven.modrinth:sodium", version.ref = "sodium-neoforge" }
+embeddium = { module = "maven.modrinth:embeddium", version.ref = "embeddium" }
+
+[bundles]
+mixin = [ "mixin", "mixin-extras" ]
+
+[plugins]
+mdg = { id = "net.neoforged.moddev", version.ref = "mdg" }
+
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }

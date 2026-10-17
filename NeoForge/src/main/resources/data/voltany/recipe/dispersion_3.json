@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "botania"
+    }
+  ],
+  "pattern": [
+    "DDD",
+    "DXD",
+    "DDD"
+  ],
+  "key": {
+    "D": {
+      "item": "botania:mana_diamond"
+    },
+    "X": {
+      "item": "voltany:dispersion_2"
+    }
+  },
+  "result": {
+    "count": 1,
+    "id": "voltany:dispersion_3"
+  }
+}

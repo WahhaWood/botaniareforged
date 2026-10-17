@@ -1,0 +1,41 @@
+{
+  "parent": "botania:challenge/root",
+  "criteria": {
+    "flower": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "botania:daybloom_motif",
+              "botania:nightshade_motif"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.botania:old_flower_pickup.desc"
+    },
+    "frame": "challenge",
+    "hidden": true,
+    "icon": {
+      "count": 1,
+      "id": "botania:daybloom_motif"
+    },
+    "title": {
+      "translate": "advancement.botania:old_flower_pickup"
+    }
+  },
+  "requirements": [
+    [
+      "flower"
+    ]
+  ],
+  "rewards": {
+    "experience": 40
+  },
+  "sends_telemetry_event": true
+}

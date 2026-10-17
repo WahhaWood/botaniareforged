@@ -1,0 +1,33 @@
+{
+  "parent": "botania:main/elf_portal_open",
+  "criteria": {
+    "essence": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#botania:ender_essences"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.botania:enderEssenceMake.desc"
+    },
+    "icon": {
+      "count": 1,
+      "id": "botania:pure_ender_essence"
+    },
+    "title": {
+      "translate": "advancement.botania:enderEssenceMake"
+    }
+  },
+  "requirements": [
+    [
+      "essence"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,24 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "cutout",
+  "loader": "neoforge:obj",
+  "flip_v": true,
+  "model": "botania:models/block/obj/me_agglomeration_factory.obj",
+  "textures": {
+    "texture0": "botania:block/model/me_agglomeration_factory",
+    "particle": "botania:block/model/me_agglomeration_factory"
+  },
+  "transform": {
+    "origin": "center",
+    "translation": [
+      0,
+      -0.5,
+      0
+    ],
+    "scale": [
+      0.5,
+      0.5,
+      0.5
+    ]
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "ae2:chest"
+    },
+    {
+      "item": "ae2:cell_component_16k"
+    },
+    {
+      "item": "ae2:energy_cell"
+    },
+    {
+      "item": "botania:mana_cell_housing"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "botania:portable_mana_cell_16k"
+  }
+}

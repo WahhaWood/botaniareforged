@@ -1,0 +1,4 @@
+// 1.21.1	2026-07-25T08:00:00.463674916	Botania/Conventional Tags for minecraft:entity_type
+11d4fb382a4de447450cc225a0baf02cc91e6902 data/botania/tags/entity_type/not_charmable.json
+d1b4856679926efa51d93d85741f3d21adb6b683 data/c/tags/entity_type/bosses.json
+9bc4a0f805a162cf35a371f1d3d7bd284e4c0b3a data/c/tags/entity_type/minecarts.json

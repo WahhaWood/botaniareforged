@@ -1,0 +1,68 @@
+/*
+ * This class is distributed as part of the Botania Mod.
+ * Get the Source Code in github:
+ * https://github.com/Vazkii/Botania
+ *
+ * Botania is Open Source and distributed under the
+ * Botania License: http://botaniamod.net/license.php
+ */
+package vazkii.botania.common.block.red_string;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+
+import org.jetbrains.annotations.Nullable;
+
+import vazkii.botania.common.block.block_entity.BotaniaBlockEntities;
+import vazkii.botania.common.block.block_entity.red_string.RedStringBlockEntity;
+import vazkii.botania.common.block.block_entity.red_string.RedStringDispenserBlockEntity;
+
+public class RedStringDispenserBlock extends RedStringBlock {
+
+	public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
+
+	public RedStringDispenserBlock(BlockBehaviour.Properties builder) {
+		super(builder);
+		registerDefaultState(defaultBlockState().setValue(POWERED, false));
+	}
+
+	@Override
+	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+		super.createBlockStateDefinition(builder);
+		builder.add(POWERED);
+	}
+
+	@Override
+	public void neighborChanged(BlockState state, Level world, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
+		boolean power = world.getBestNeighborSignal(pos) > 0;
+		boolean powered = state.getValue(POWERED);
+
+		if (power && !powered) {
+			world.getBlockEntity(pos, BotaniaBlockEntities.RED_STRINGED_DISPENSER)
+					.ifPresent(RedStringDispenserBlockEntity::tickDispenser);
+			world.setBlock(pos, state.setValue(POWERED, true), Block.UPDATE_INVISIBLE);
+		} else if (!power && powered) {
+			world.setBlock(pos, state.setValue(POWERED, false), Block.UPDATE_INVISIBLE);
+		}
+	}
+
+	@Override
+	public RedStringBlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+		return new RedStringDispenserBlockEntity(pos, state);
+	}
+
+	@Nullable
+	@Override
+	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+		return createTickerHelper(type, BotaniaBlockEntities.RED_STRINGED_DISPENSER, RedStringDispenserBlockEntity::commonTick);
+	}
+}

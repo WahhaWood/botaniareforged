@@ -1,0 +1,24 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "vazkii.botania.neoforge.mixin",
+  "refmap": "${mod_id}.refmap.json",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "AbstractFurnaceBlockEntityNeoForgeAccessor",
+    "BotaniaGrassBlockNeoForgeMixin",
+    "IDeathMessageProviderNeoForgeMixin",
+    "ItemStackNeoForgeMixin",
+    "WorldPresetNeoForgeAccessor"
+  ],
+  "client": [
+    "client.ParticleEngineNeoForgeMixin"
+  ],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "values": [
+    "#c:storage_blocks/manasteel",
+    "#c:storage_blocks/terrasteel",
+    "#c:storage_blocks/elementium",
+    "#c:storage_blocks/mana_diamond",
+    "#c:storage_blocks/dragonstone",
+    "#c:storage_blocks/blaze",
+    "#c:storage_blocks/petal"
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "botanicalextramachinery:upgrade_pattern"
+    },
+    {
+      "item": "botanicalextramachinery:upgrade_cost_energy"
+    },
+    {
+      "item": "botanicalextramachinery:upgrade_heat_greenhouse"
+    },
+    {
+      "item": "botanicalextramachinery:upgrade_storage_energy_1"
+    },
+    {
+      "item": "minecraft:glass"
+    },
+    {
+      "item": "minecraft:blaze_powder"
+    }
+  ],
+  "result": {
+    "id": "botanicalextramachinery:upgrade_gen_mana",
+    "count": 1
+  },
+  "show_notification": true
+}

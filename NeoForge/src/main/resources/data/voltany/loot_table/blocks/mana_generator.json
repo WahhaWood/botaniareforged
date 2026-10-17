@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:block",
+  "random_sequence": "voltany:blocks/mana_generator",
+  "pools": [
+    {
+      "rolls": 1.0,
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "voltany:mana_generator"
+        }
+      ]
+    }
+  ]
+}

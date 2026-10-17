@@ -1,0 +1,64 @@
+/*
+ * This class is distributed as part of the Botania Mod.
+ * Get the Source Code in github:
+ * https://github.com/Vazkii/Botania
+ *
+ * Botania is Open Source and distributed under the
+ * Botania License: http://botaniamod.net/license.php
+ */
+
+package vazkii.botania.xplat;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.texture.AbstractTexture;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+
+import org.jetbrains.annotations.Nullable;
+
+import vazkii.botania.api.ServiceUtil;
+
+import static vazkii.botania.api.BotaniaAPI.botaniaRL;
+
+public interface ClientXplatAbstractions {
+	ResourceLocation FLOATING_FLOWER_MODEL_LOADER_ID = botaniaRL("floating_flower");
+	ResourceLocation MANA_GUN_MODEL_LOADER_ID = botaniaRL("mana_blaster");
+
+	// Event firing
+	void fireRenderTinyPotato(BlockEntity potato, Component name, float tickDelta, PoseStack ms, MultiBufferSource buffers, int light, int overlay);
+
+	// Networking
+	void sendToServer(CustomPacketPayload packet);
+
+	// Rendering stuff
+
+	/**
+	 * Try to load the resource/standalone model with the specified resource location.
+	 * Returns null if no model was found.
+	 */
+	@Nullable
+	BakedModel getResourceModel(ResourceLocation id);
+	BakedModel wrapPlatformModel(BakedModel original);
+	int getGuiRightHeight(Player player);
+	void setFilterSave(AbstractTexture texture, boolean filter, boolean mipmap);
+	void restoreLastFilter(AbstractTexture texture);
+	void tessellateBlock(Level level, BlockState state, BlockPos pos, PoseStack ps, MultiBufferSource buffers, int overlay);
+	/** Marks an animated sprite as "active" for Sodium, if present. */
+	void markSpriteActive(TextureAtlasSprite sprite);
+
+	ClientXplatAbstractions INSTANCE = ServiceUtil.findService(ClientXplatAbstractions.class, null);
+
+	static ClientXplatAbstractions instance() {
+		return INSTANCE;
+	}
+}

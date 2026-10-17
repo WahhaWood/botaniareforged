@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_cyan_mystical_petal": {
+      "conditions": {
+        "items": [
+          {
+            "items": "botania:cyan_mystical_petal"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "botania:cyan_petal_block"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_cyan_mystical_petal"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "botania:cyan_petal_block"
+    ]
+  }
+}

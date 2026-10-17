@@ -1,0 +1,51 @@
+/*
+ * This class is distributed as part of the Botania Mod.
+ * Get the Source Code in github:
+ * https://github.com/Vazkii/Botania
+ *
+ * Botania is Open Source and distributed under the
+ * Botania License: http://botaniamod.net/license.php
+ */
+package vazkii.botania.network.serverbound;
+
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.item.ItemStack;
+
+import vazkii.botania.common.handler.BotaniaSounds;
+import vazkii.botania.common.handler.EquipmentHandler;
+import vazkii.botania.common.item.BotaniaItems;
+import vazkii.botania.common.item.equipment.bauble.RingOfDexterousMotionItem;
+
+import static vazkii.botania.api.BotaniaAPI.botaniaRL;
+
+import io.netty.buffer.ByteBuf;
+
+public class DodgePacket implements CustomPacketPayload {
+	public static final DodgePacket INSTANCE = new DodgePacket();
+	public static final Type<DodgePacket> ID = new Type<>(botaniaRL("do"));
+	public static final StreamCodec<ByteBuf, DodgePacket> STREAM_CODEC = StreamCodec.unit(INSTANCE);
+
+	private DodgePacket() {}
+
+	@Override
+	public Type<DodgePacket> type() {
+		return ID;
+	}
+
+	public void handle(ServerPlayer player) {
+		player.level().playSound(null, player.getX(), player.getY(), player.getZ(), BotaniaSounds.DASH, SoundSource.PLAYERS, 1F, 1F);
+
+		ItemStack ringStack = EquipmentHandler.findOrEmpty(BotaniaItems.RING_OF_DEXTEROUS_MOTION, player);
+		if (ringStack.isEmpty()) {
+			player.connection.disconnect(Component.translatable("botaniamisc.invalidDodge"));
+			return;
+		}
+
+		player.causeFoodExhaustion(0.3F);
+		player.getCooldowns().addCooldown(ringStack.getItem(), RingOfDexterousMotionItem.MAX_CD);
+	}
+}

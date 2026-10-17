@@ -1,0 +1,65 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_dispersive": {
+      "conditions": {
+        "items": [
+          {
+            "items": "botania:spark_augment_dispersive"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_dominant": {
+      "conditions": {
+        "items": [
+          {
+            "items": "botania:spark_augment_dominant"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_isolated": {
+      "conditions": {
+        "items": [
+          {
+            "items": "botania:spark_augment_isolated"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_recessive": {
+      "conditions": {
+        "items": [
+          {
+            "items": "botania:spark_augment_recessive"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "botania:spark_augments_banner_pattern"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_dispersive",
+      "has_dominant",
+      "has_isolated",
+      "has_recessive"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "botania:spark_augments_banner_pattern"
+    ]
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "botania"
+    }
+  ],
+  "pattern": [
+    " M ",
+    "MSM",
+    " M "
+  ],
+  "key": {
+    "M": {
+      "item": "botania:manasteel_ingot"
+    },
+    "S": {
+      "item": "botania:mana_spark"
+    }
+  },
+  "result": {
+    "count": 1,
+    "id": "voltany:spark_resonator"
+  }
+}

@@ -1,0 +1,266 @@
+/*
+ * This class is distributed as part of the Botania Mod.
+ * Get the Source Code in github:
+ * https://github.com/Vazkii/Botania
+ *
+ * Botania is Open Source and distributed under the
+ * Botania License: http://botaniamod.net/license.php
+ */
+package vazkii.botania.client.integration.jei;
+
+import mezz.jei.api.IModPlugin;
+import mezz.jei.api.JeiPlugin;
+import mezz.jei.api.constants.RecipeTypes;
+import mezz.jei.api.constants.VanillaTypes;
+import mezz.jei.api.ingredients.subtypes.IIngredientSubtypeInterpreter;
+import mezz.jei.api.ingredients.subtypes.UidContext;
+import mezz.jei.api.recipe.IRecipeManager;
+import mezz.jei.api.registration.IRecipeCatalystRegistration;
+import mezz.jei.api.registration.IRecipeCategoryRegistration;
+import mezz.jei.api.registration.IRecipeRegistration;
+import mezz.jei.api.registration.IRecipeTransferRegistration;
+import mezz.jei.api.registration.ISubtypeRegistration;
+import mezz.jei.api.registration.IVanillaCategoryExtensionRegistration;
+import mezz.jei.api.runtime.IJeiRuntime;
+import mezz.jei.api.runtime.IRecipesGui;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.*;
+import net.minecraft.world.level.block.Block;
+
+import org.apache.commons.lang3.ObjectUtils;
+
+import vazkii.botania.api.mana.ManaItem;
+import vazkii.botania.api.recipe.*;
+import vazkii.botania.client.core.handler.CorporeaInputHandler;
+import vazkii.botania.client.gui.crafting.AssemblyHaloContainer;
+import vazkii.botania.client.integration.jei.crafting.AncientWillRecipeWrapper;
+import vazkii.botania.client.integration.jei.crafting.CompositeLensRecipeWrapper;
+import vazkii.botania.client.integration.jei.crafting.TerraShattererTippingRecipeWrapper;
+import vazkii.botania.client.integration.jei.orechid.MarimorphosisRecipeCategory;
+import vazkii.botania.client.integration.jei.orechid.OrechidIgnemRecipeCategory;
+import vazkii.botania.client.integration.jei.orechid.OrechidRecipeCategory;
+import vazkii.botania.common.block.BotaniaBlocks;
+import vazkii.botania.common.component.BotaniaDataComponents;
+import vazkii.botania.common.crafting.BotaniaRecipeTypes;
+import vazkii.botania.common.crafting.LexiconElvenTradeRecipe;
+import vazkii.botania.common.crafting.StateIngredients;
+import vazkii.botania.common.crafting.recipe.AncientWillRecipe;
+import vazkii.botania.common.crafting.recipe.CompositeLensRecipe;
+import vazkii.botania.common.crafting.recipe.TerraShattererTippingRecipe;
+import vazkii.botania.common.item.BotaniaItems;
+import vazkii.botania.common.item.LaputaShardItem;
+import vazkii.botania.common.item.ManaTabletItem;
+import vazkii.botania.common.item.brew.BaseBrewItem;
+import vazkii.botania.common.item.equipment.bauble.FlugelTiaraItem;
+import vazkii.botania.common.item.equipment.tool.terrasteel.TerraShattererItem;
+
+import java.lang.ref.WeakReference;
+import java.util.Comparator;
+import java.util.List;
+import java.util.function.Supplier;
+
+import static vazkii.botania.api.BotaniaAPI.botaniaRL;
+
+@JeiPlugin
+public class JEIBotaniaPlugin implements IModPlugin {
+	private static final ResourceLocation ID = botaniaRL("main");
+
+	@SuppressWarnings("removal")
+	@Override
+	public void registerItemSubtypes(ISubtypeRegistration registry) {
+		//TODO use ISubtypeInterpreter instead? (weird interface, requiring you to implement a deprecated-for-removal method)
+		IIngredientSubtypeInterpreter<ItemStack> interpreter = (stack, ctx) -> BaseBrewItem.getSubtype(stack);
+		registry.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, BotaniaItems.BREW_VIAL, interpreter);
+		registry.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, BotaniaItems.BREW_FLASK, interpreter);
+		registry.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, BotaniaItems.INCENSE_STICK, interpreter);
+		registry.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, BotaniaItems.TAINTED_BLOOD_PENDANT, interpreter);
+
+		registry.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, BotaniaItems.FLUGEL_TIARA,
+				(stack, ctx) -> String.valueOf(FlugelTiaraItem.getVariant(stack)));
+		registry.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, BotaniaItems.LEXICA_BOTANIA,
+				(stack, ctx) -> String.valueOf(stack.has(BotaniaDataComponents.ELVEN_UNLOCK)));
+		registry.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, BotaniaItems.SHARD_OF_LAPUTA,
+				(stack, ctx) -> String.valueOf(LaputaShardItem.getShardLevel(stack)));
+
+		registry.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, BotaniaItems.TERRA_SHATTERER, (stack, ctx) -> {
+			if (ctx == UidContext.Recipe) {
+				return String.valueOf(TerraShattererItem.isTipped(stack));
+			}
+			return String.valueOf(TerraShattererItem.getLevel(stack)) + TerraShattererItem.isTipped(stack);
+		});
+		registry.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, BotaniaItems.MANA_TABLET, (stack, ctx) -> {
+			int mana = ManaItem.LOOKUP.find(stack).getMana();
+			return String.valueOf(mana) + ManaTabletItem.isStackCreative(stack);
+		});
+
+		for (Item item : new Item[] { BotaniaItems.BAND_OF_MANA, BotaniaItems.GREATER_BAND_OF_MANA }) {
+			registry.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, item, (stack, ctx) -> {
+				int mana = ManaItem.LOOKUP.find(stack).getMana();
+				return String.valueOf(mana);
+			});
+		}
+	}
+
+	@Override
+	public void registerCategories(IRecipeCategoryRegistration registry) {
+		registry.addRecipeCategories(
+				new PureDaisyRecipeCategory(registry.getJeiHelpers().getGuiHelper(), registry.getJeiHelpers().getPlatformFluidHelper()),
+				new ManaPoolRecipeCategory(registry.getJeiHelpers().getGuiHelper()),
+				new PetalApothecaryRecipeCategory(registry.getJeiHelpers().getGuiHelper()),
+				new RunicAltarRecipeCategory(registry.getJeiHelpers().getGuiHelper()),
+				new ElvenTradeRecipeCategory(registry.getJeiHelpers().getGuiHelper()),
+				new BreweryRecipeCategory(registry.getJeiHelpers().getGuiHelper()),
+				new OrechidRecipeCategory(registry.getJeiHelpers().getGuiHelper()),
+				new OrechidIgnemRecipeCategory(registry.getJeiHelpers().getGuiHelper()),
+				new MarimorphosisRecipeCategory(registry.getJeiHelpers().getGuiHelper()),
+				new TerrestrialAgglomerationRecipeCategory(registry.getJeiHelpers().getGuiHelper())
+		);
+	}
+
+	@Override
+	public void registerVanillaCategoryExtensions(IVanillaCategoryExtensionRegistration registration) {
+		registration.getCraftingCategory().addExtension(AncientWillRecipe.class, new AncientWillRecipeWrapper());
+		registration.getCraftingCategory().addExtension(TerraShattererTippingRecipe.class, new TerraShattererTippingRecipeWrapper());
+		registration.getCraftingCategory().addExtension(CompositeLensRecipe.class, new CompositeLensRecipeWrapper());
+	}
+
+	@Override
+	public void registerRecipes(IRecipeRegistration registry) {
+		registry.addRecipes(BreweryRecipeCategory.TYPE, sortRecipes(BotaniaRecipeTypes.BREW_TYPE, BY_ID));
+		registry.addRecipes(PureDaisyRecipeCategory.TYPE, sortRecipes(BotaniaRecipeTypes.PURE_DAISY_TYPE, BY_ID));
+		registry.addRecipes(PetalApothecaryRecipeCategory.TYPE, sortRecipes(BotaniaRecipeTypes.PETAL_APOTHECARY_TYPE, BY_ID));
+		registry.addRecipes(ElvenTradeRecipeCategory.TYPE, sortRecipes(BotaniaRecipeTypes.ELVEN_TRADE_TYPE, BY_ID));
+		registry.addRecipes(RunicAltarRecipeCategory.TYPE, sortRecipes(BotaniaRecipeTypes.RUNIC_ALTAR_TYPE, BY_ID));
+		registry.addRecipes(ManaPoolRecipeCategory.TYPE, sortRecipes(BotaniaRecipeTypes.MANA_INFUSION_TYPE, BY_CATALYST.thenComparing(BY_GROUP).thenComparing(BY_ID)));
+		registry.addRecipes(TerrestrialAgglomerationRecipeCategory.TYPE, sortRecipes(BotaniaRecipeTypes.TERRA_PLATE_TYPE, BY_ID));
+
+		Comparator<RecipeHolder<? extends OrechidRecipe>> comp = BY_WEIGHT.thenComparing(BY_ID);
+		registry.addRecipes(OrechidRecipeCategory.TYPE, sortRecipes(BotaniaRecipeTypes.ORECHID_TYPE, comp));
+		registry.addRecipes(OrechidIgnemRecipeCategory.TYPE, sortRecipes(BotaniaRecipeTypes.ORECHID_IGNEM_TYPE, comp));
+		registry.addRecipes(MarimorphosisRecipeCategory.TYPE, sortRecipes(BotaniaRecipeTypes.MARIMORPHOSIS_TYPE, comp));
+	}
+
+	private static final Comparator<RecipeHolder<? extends Recipe<?>>> BY_ID = Comparator.comparing(RecipeHolder::id);
+	private static final Comparator<RecipeHolder<? extends Recipe<?>>> BY_GROUP = Comparator.comparing(holder -> holder.value().getGroup());
+	private static final Comparator<RecipeHolder<? extends OrechidRecipe>> BY_WEIGHT =
+			Comparator.<RecipeHolder<? extends OrechidRecipe>, Integer>comparing(holder -> holder.value().getWeight()).reversed();
+	private static final Comparator<RecipeHolder<ManaInfusionRecipe>> BY_CATALYST = (l, r) -> {
+		StateIngredient left = l.value().getRecipeCatalyst();
+		StateIngredient right = r.value().getRecipeCatalyst();
+		if (left == StateIngredients.NONE) {
+			return right == StateIngredients.NONE ? 0 : -1;
+		} else if (right == StateIngredients.NONE) {
+			return 1;
+		} else {
+			return left.streamBlockStates().map(Object::toString).findFirst().orElse("")
+					.compareTo(right.streamBlockStates().map(Object::toString).findFirst().orElse(""));
+		}
+	};
+
+	private static <T extends Recipe<C>, C extends RecipeInput> List<T> sortRecipes(RecipeType<T> type, Comparator<? super RecipeHolder<T>> comparator) {
+		return Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(type)
+				.stream().sorted(comparator).map(RecipeHolder::value).toList();
+	}
+
+	@Override
+	public void registerRecipeTransferHandlers(IRecipeTransferRegistration registry) {
+		registry.addRecipeTransferHandler(AssemblyHaloContainer.class, null, RecipeTypes.CRAFTING, 1, 9, 10, 36);
+	}
+
+	@Override
+	public void registerRecipeCatalysts(IRecipeCatalystRegistration registry) {
+		registry.addRecipeCatalyst(new ItemStack(BotaniaBlocks.BOTANICAL_BREWERY), BreweryRecipeCategory.TYPE);
+		registry.addRecipeCatalyst(new ItemStack(BotaniaBlocks.ELVEN_GATEWAY_CORE), ElvenTradeRecipeCategory.TYPE);
+
+		registry.addRecipeCatalyst(new ItemStack(BotaniaBlocks.MANA_POOL), ManaPoolRecipeCategory.TYPE);
+		registry.addRecipeCatalyst(new ItemStack(BotaniaBlocks.DILUTED_MANA_POOL), ManaPoolRecipeCategory.TYPE);
+		registry.addRecipeCatalyst(new ItemStack(BotaniaBlocks.FABULOUS_MANA_POOL), ManaPoolRecipeCategory.TYPE);
+
+		for (Block apothecary : BotaniaBlocks.ALL_APOTHECARIES) {
+			registry.addRecipeCatalyst(new ItemStack(apothecary), PetalApothecaryRecipeCategory.TYPE);
+		}
+
+		registry.addRecipeCatalyst(new ItemStack(BotaniaBlocks.ORECHID), OrechidRecipeCategory.TYPE);
+		registry.addRecipeCatalyst(new ItemStack(BotaniaBlocks.FLOATING_ORECHID), OrechidRecipeCategory.TYPE);
+		registry.addRecipeCatalyst(new ItemStack(BotaniaBlocks.ORECHID_IGNEM), OrechidIgnemRecipeCategory.TYPE);
+		registry.addRecipeCatalyst(new ItemStack(BotaniaBlocks.FLOATING_ORECHID_IGNEM), OrechidIgnemRecipeCategory.TYPE);
+		registry.addRecipeCatalyst(new ItemStack(BotaniaBlocks.MARIMORPHOSIS), MarimorphosisRecipeCategory.TYPE);
+		registry.addRecipeCatalyst(new ItemStack(BotaniaBlocks.MARIMORPHOSIS_PETITE), MarimorphosisRecipeCategory.TYPE);
+		registry.addRecipeCatalyst(new ItemStack(BotaniaBlocks.FLOATING_MARIMORPHOSIS), MarimorphosisRecipeCategory.TYPE);
+		registry.addRecipeCatalyst(new ItemStack(BotaniaBlocks.FLOATING_MARIMORPHOSIS_PETITE), MarimorphosisRecipeCategory.TYPE);
+		registry.addRecipeCatalyst(new ItemStack(BotaniaBlocks.PURE_DAISY), PureDaisyRecipeCategory.TYPE);
+		registry.addRecipeCatalyst(new ItemStack(BotaniaBlocks.FLOATING_PURE_DAISY), PureDaisyRecipeCategory.TYPE);
+
+		registry.addRecipeCatalyst(new ItemStack(BotaniaBlocks.RUNIC_ALTAR), RunicAltarRecipeCategory.TYPE);
+		registry.addRecipeCatalyst(new ItemStack(BotaniaBlocks.TERRESTRIAL_AGGLOMERATION_PLATE), TerrestrialAgglomerationRecipeCategory.TYPE);
+		registry.addRecipeCatalyst(new ItemStack(BotaniaItems.MANUFACTORY_HALO), RecipeTypes.CRAFTING);
+		registry.addRecipeCatalyst(new ItemStack(BotaniaItems.ASSEMBLY_HALO), RecipeTypes.CRAFTING);
+	}
+
+	@Override
+	public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
+		IRecipeManager recipeRegistry = jeiRuntime.getRecipeManager();
+		RecipeManager recipeManager = Minecraft.getInstance().level.getRecipeManager();
+		// Hide the return recipes (iron ingot/diamond/ender pearl returns, not lexicon)
+		for (RecipeHolder<ElvenTradeRecipe> recipe : recipeManager.getAllRecipesFor(BotaniaRecipeTypes.ELVEN_TRADE_TYPE)) {
+			if (recipe.value() instanceof LexiconElvenTradeRecipe) {
+				continue;
+			}
+			if (recipe.value().isReturnRecipe()) {
+				recipeRegistry.hideRecipes(ElvenTradeRecipeCategory.TYPE, List.of(recipe.value()));
+			}
+		}
+
+		// TODO: we should probably not hard-code recipe IDs this way here
+		recipeManager.byKey(botaniaRL("petal_apothecary/daybloom_motif"))
+				.ifPresent(r -> {
+					if (r.value() instanceof PetalApothecaryRecipe pr) {
+						recipeRegistry.hideRecipes(PetalApothecaryRecipeCategory.TYPE, List.of(pr));
+					}
+				});
+		recipeManager.byKey(botaniaRL("petal_apothecary/nightshade_motif"))
+				.ifPresent(r -> {
+					if (r.value() instanceof PetalApothecaryRecipe pr) {
+						recipeRegistry.hideRecipes(PetalApothecaryRecipeCategory.TYPE, List.of(pr));
+					}
+				});
+
+		HOVERED_STACK_GETTER.jeiRuntimeRef = new WeakReference<>(jeiRuntime);
+		if (!CorporeaInputHandler.hoveredStackGetters.contains(HOVERED_STACK_GETTER)) {
+			CorporeaInputHandler.hoveredStackGetters.add(HOVERED_STACK_GETTER);
+		}
+		CorporeaInputHandler.supportedGuiFilter = CorporeaInputHandler.supportedGuiFilter.or(gui -> gui instanceof IRecipesGui);
+	}
+
+	@Override
+	public ResourceLocation getPluginUid() {
+		return ID;
+	}
+
+	private static final HoveredStackGetter HOVERED_STACK_GETTER = new HoveredStackGetter();
+
+	private static class HoveredStackGetter implements Supplier<ItemStack> {
+		// Technically, this doesn't have to be WeakReference. The old one will be released and collected
+		// when the new one is assigned. But we don't to keep hanging onto the memory if someone quits out
+		// to the menu and then idles there, so use a WeakReference here.
+		WeakReference<IJeiRuntime> jeiRuntimeRef;
+
+		@Override
+		public ItemStack get() {
+			var jeiRuntime = jeiRuntimeRef.get();
+			if (jeiRuntime == null) {
+				return ItemStack.EMPTY;
+			}
+			return ObjectUtils.getFirstNonNull(
+					() -> jeiRuntime.getIngredientListOverlay().getIngredientUnderMouse(VanillaTypes.ITEM_STACK),
+					() -> jeiRuntime.getRecipesGui().getIngredientUnderMouse(VanillaTypes.ITEM_STACK).orElse(null),
+					() -> jeiRuntime.getBookmarkOverlay().getIngredientUnderMouse(VanillaTypes.ITEM_STACK),
+					() -> ItemStack.EMPTY
+			);
+		}
+	}
+}

@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "botanicalextramachinery:upgrade_pattern"
+    },
+    {
+      "item": "botanicalextramachinery:upgrade_flower_16x"
+    },
+    {
+      "item": "botanicalextramachinery:upgrade_slot_add"
+    },
+    {
+      "item": "botanicalextramachinery:shadow_ingot"
+    },
+    {
+      "item": "botanicalextramachinery:shadow_dragonstone_block"
+    }
+  ],
+  "result": {
+    "id": "botanicalextramachinery:upgrade_flower_32x",
+    "count": 1
+  },
+  "show_notification": true
+}

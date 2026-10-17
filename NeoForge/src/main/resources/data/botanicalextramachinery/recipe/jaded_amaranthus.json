@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "a": {
+      "item": "botania:greater_ring_of_magnetization"
+    },
+    "b": {
+      "item": "botanicalextramachinery:crystal_ingot"
+    },
+    "c": {
+      "item": "botania:jaded_amaranthus"
+    },
+    "d": {
+      "item": "botanicalextramachinery:crystal_dragonstone_block"
+    }
+  },
+  "pattern": [
+    "aba",
+    "bcb",
+    "ddd"
+  ],
+  "result": {
+    "id": "botanicalextramachinery:jaded_amaranthus",
+    "count": 1
+  },
+  "show_notification": true
+}

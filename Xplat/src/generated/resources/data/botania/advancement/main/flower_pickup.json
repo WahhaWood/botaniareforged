@@ -1,0 +1,44 @@
+{
+  "parent": "botania:main/root",
+  "criteria": {
+    "double_flower": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#botania:tall_mystical_flowers"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "flower": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#botania:small_mystical_flowers"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.botania:flowerPickup.desc"
+    },
+    "icon": {
+      "count": 1,
+      "id": "botania:pink_mystical_flower"
+    },
+    "title": {
+      "translate": "advancement.botania:flowerPickup"
+    }
+  },
+  "requirements": [
+    [
+      "flower",
+      "double_flower"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

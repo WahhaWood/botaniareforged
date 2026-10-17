@@ -1,0 +1,28 @@
+{
+  "type": "botania:terrestrial_agglomeration_plate",
+  "ingredients": [
+    {
+      "item": "botanicalextramachinery:crimson_ingot"
+    },
+    {
+      "item": "botania:gaia_ingot"
+    },
+    {
+      "item": "botania:gaia_ingot"
+    },
+    {
+      "item": "botania:gaia_ingot"
+    },
+    {
+      "item": "botania:gaia_ingot"
+    },
+    {
+      "item": "botanicalextramachinery:crimson_ingot_block"
+    }
+  ],
+  "mana": 2500000,
+  "result": {
+    "id": "botanicalextramachinery:aureate_ingot",
+    "count": 1
+  }
+}

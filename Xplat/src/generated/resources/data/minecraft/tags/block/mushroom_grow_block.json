@@ -1,0 +1,20 @@
+{
+  "values": [
+    "botania:mycelite",
+    "botania:mycelite_slab",
+    "botania:mycelite_stairs",
+    "botania:mycelite_wall",
+    "botania:mycelite_bricks",
+    "botania:mycelite_brick_slab",
+    "botania:mycelite_brick_stairs",
+    "botania:mycelite_brick_wall",
+    "botania:cobbled_mycelite",
+    "botania:cobbled_mycelite_slab",
+    "botania:cobbled_mycelite_stairs",
+    "botania:cobbled_mycelite_wall",
+    "botania:chiseled_mycelite_bricks",
+    "botania:mycelite_petal_apothecary",
+    "botania:infused_grass",
+    "botania:mutated_grass"
+  ]
+}

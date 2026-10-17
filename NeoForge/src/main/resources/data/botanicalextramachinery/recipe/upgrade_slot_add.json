@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "botanicalextramachinery:upgrade_pattern"
+    },
+    {
+      "item": "botania:assembly_halo"
+    },
+    {
+      "item": "minecraft:chest"
+    }
+  ],
+  "result": {
+    "id": "botanicalextramachinery:upgrade_slot_add",
+    "count": 1
+  },
+  "show_notification": true
+}

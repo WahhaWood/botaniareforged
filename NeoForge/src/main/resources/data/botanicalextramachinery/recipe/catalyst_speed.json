@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "botanicalextramachinery:catalyst_pattern"
+    },
+    {
+      "item": "minecraft:redstone_block"
+    },
+    {
+      "item": "botanicalextramachinery:saffron_spark"
+    },
+    {
+      "item": "minecraft:iron_ingot"
+    }
+  ],
+  "result": {
+    "id": "botanicalextramachinery:catalyst_speed",
+    "count": 1
+  },
+  "show_notification": true
+}

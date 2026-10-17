@@ -1,0 +1,19 @@
+{
+  "type": "botania:terrestrial_agglomeration_plate",
+  "ingredients": [
+    {
+      "item": "botania:terrasteel_ingot"
+    },
+    {
+      "item": "botania:gaia_spirit"
+    },
+    {
+      "item": "botania:elementium_ingot"
+    }
+  ],
+  "mana": 750000,
+  "result": {
+    "id": "botanicalextramachinery:malachite_ingot",
+    "count": 1
+  }
+}

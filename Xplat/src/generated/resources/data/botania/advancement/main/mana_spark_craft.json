@@ -1,0 +1,33 @@
+{
+  "parent": "botania:main/mana_pool_pickup",
+  "criteria": {
+    "spark": {
+      "conditions": {
+        "items": [
+          {
+            "items": "botania:mana_spark"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.botania:sparkCraft.desc"
+    },
+    "icon": {
+      "count": 1,
+      "id": "botania:mana_spark"
+    },
+    "title": {
+      "translate": "advancement.botania:sparkCraft"
+    }
+  },
+  "requirements": [
+    [
+      "spark"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

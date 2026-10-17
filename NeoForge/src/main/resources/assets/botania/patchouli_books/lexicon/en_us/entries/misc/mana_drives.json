@@ -1,0 +1,38 @@
+{
+  "name": "vazkii.botania.ae2.entry.mana_drives",
+  "category": "botania:misc",
+  "icon": "botania:mana_cell_housing",
+  "entry_color": "aa00",
+  "advancement": "botania:main/elf_lexicon_pickup",
+  "pages": [
+    {
+      "type": "text",
+      "text": "vazkii.botania.ae2.page.mana_drives0"
+    },
+    {
+      "type": "crafting",
+      "text": "vazkii.botania.ae2.page.mana_drives1",
+      "recipe": "botania:mana_cell_housing"
+    },
+    {
+      "type": "crafting",
+      "recipe": "botania:mana_cell_1k"
+    },
+    {
+      "type": "crafting",
+      "recipe": "botania:mana_cell_4k"
+    },
+    {
+      "type": "crafting",
+      "recipe": "botania:mana_cell_16k"
+    },
+    {
+      "type": "crafting",
+      "recipe": "botania:mana_cell_64k"
+    },
+    {
+      "type": "crafting",
+      "recipe": "botania:mana_cell_256k"
+    }
+  ]
+}

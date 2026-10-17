@@ -1,0 +1,33 @@
+{
+  "parent": "botania:main/elf_portal_open",
+  "criteria": {
+    "bubbell": {
+      "conditions": {
+        "items": [
+          {
+            "items": "botania:bubbell"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.botania:bubbellPickup.desc"
+    },
+    "icon": {
+      "count": 1,
+      "id": "botania:bubbell"
+    },
+    "title": {
+      "translate": "advancement.botania:bubbellPickup"
+    }
+  },
+  "requirements": [
+    [
+      "bubbell"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

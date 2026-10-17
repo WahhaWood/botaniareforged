@@ -1,0 +1,88 @@
+## Windows
+Thumbs.db
+
+## gradle
+.gradle
+build
+
+## Run directories
+/run
+/run-gametest
+/NeoForge/run
+/Fabric/run
+
+## Python
+__pycache__/
+*.pyc
+
+## eclipse
+.settings
+.metadata
+.classpath
+.project
+eclipse
+bin
+
+## gradle generated eclipse runs
+/*.launch
+
+## intellij
+out
+/.idea/*
+!/.idea/scopes
+/atlassian-ide-plugin.xml
+/*.ipr
+/*.iws
+/*.iml
+/classes
+
+## vscode
+.favorites.json
+.vscode/settings.json
+Fabric/.vscode/*
+ 
+## Private Stuffs
+/private.properties
+
+## Jars
+*.jar
+!/gradle/wrapper/gradle-wrapper.jar
+
+## OSX (adds a lot of garbage)
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# CraftTweaker generated docs
+/docsOut
+
+# Logs
+*.log
+
+# Generated package-infos
+generatedPackageInfos/
+package-info.java
+
+# internal dev notes (local only)
+Plan.md
+DEVELOPMENT.md
+CLAUDE.md
+*.log

@@ -1,0 +1,88 @@
+/*
+ * This class is distributed as part of the Botania Mod.
+ * Get the Source Code in github:
+ * https://github.com/Vazkii/Botania
+ *
+ * Botania is Open Source and distributed under the
+ * Botania License: http://botaniamod.net/license.php
+ */
+package vazkii.botania.common.block.block_entity;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+
+import vazkii.botania.api.mana.spark.ManaSpark;
+import vazkii.botania.api.mana.spark.ManaSparkAttachable;
+import vazkii.botania.api.mana.spark.ManaSparkHelper;
+import vazkii.botania.common.lib.BotaniaTags;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+public class SparkTinkererBlockEntity extends ExposedSimpleInventoryBlockEntity {
+	public SparkTinkererBlockEntity(BlockPos pos, BlockState state) {
+		super(BotaniaBlockEntities.SPARK_TINKERER, pos, state, true);
+	}
+
+	public void doSwap() {
+		if (level.isClientSide()) {
+			return;
+		}
+
+		ItemStack changeStack = getItemHandler().getItem(0);
+		List<ManaSparkAttachable> attachables = new ArrayList<>();
+		Map<ManaSparkAttachable, ManaSpark> attachedSparks = new LinkedHashMap<>();
+		for (Direction dir : Direction.Plane.HORIZONTAL) {
+			var pos = worldPosition.relative(dir);
+			var attach = ManaSparkAttachable.LOOKUP.find(level, pos);
+			if (attach != null) {
+				ManaSpark spark = ManaSparkHelper.getAttachedSpark(level, pos);
+				if (spark != null) {
+					ItemStack upg = spark.getUpgrade();
+					if (!ItemStack.isSameItemSameComponents(upg, changeStack)) {
+						attachables.add(attach);
+						attachedSparks.put(attach, spark);
+					}
+				}
+			}
+		}
+
+		if (!attachables.isEmpty()) {
+			ManaSparkAttachable attach = attachables.get(level.getRandom().nextInt(attachables.size()));
+			ManaSpark spark = attachedSparks.get(attach);
+			ItemStack sparkStack = spark.getUpgrade();
+			spark.setUpgrade(changeStack);
+			getItemHandler().setItem(0, sparkStack);
+		}
+	}
+
+	@Override
+	protected SimpleContainer createItemHandler() {
+		return new SimpleContainer(1) {
+			@Override
+			public int getMaxStackSize() {
+				return 1;
+			}
+
+			@Override
+			public boolean canPlaceItem(int slot, ItemStack stack) {
+				return !stack.isEmpty() && stack.is(BotaniaTags.Items.MANA_SPARK_AUGMENTS);
+			}
+		};
+	}
+
+	@Override
+	public void setChanged() {
+		super.setChanged();
+		if (level != null && !level.isClientSide()) {
+			level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+		}
+	}
+
+}

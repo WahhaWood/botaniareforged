@@ -1,0 +1,39 @@
+{
+  "parent": "botania:main/ender_essence_make",
+  "criteria": {
+    "pickup": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "botania:corporea_crystal_cube",
+              "botania:corporea_funnel",
+              "botania:corporea_index",
+              "botania:corporea_interceptor",
+              "botania:corporea_retainer"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.botania:corporeaCraft.desc"
+    },
+    "icon": {
+      "count": 1,
+      "id": "botania:corporea_crystal_cube"
+    },
+    "title": {
+      "translate": "advancement.botania:corporeaCraft"
+    }
+  },
+  "requirements": [
+    [
+      "pickup"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

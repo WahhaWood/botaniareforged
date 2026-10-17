@@ -1,0 +1,30 @@
+{
+  "parent": "botania:challenge/root",
+  "criteria": {
+    "code_triggered": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.botania:rankSSPick.desc"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "botania:terra_shatterer"
+    },
+    "title": {
+      "translate": "advancement.botania:rankSSPick"
+    }
+  },
+  "requirements": [
+    [
+      "code_triggered"
+    ]
+  ],
+  "rewards": {
+    "experience": 500
+  },
+  "sends_telemetry_event": true
+}

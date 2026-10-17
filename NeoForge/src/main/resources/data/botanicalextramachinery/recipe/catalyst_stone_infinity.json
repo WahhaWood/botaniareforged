@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "botanicalextramachinery:catalyst_pattern"
+    },
+    {
+      "item": "minecraft:stone"
+    },
+    {
+      "item": "botania:rune_of_pride"
+    }
+  ],
+  "result": {
+    "id": "botanicalextramachinery:catalyst_stone_infinity",
+    "count": 1
+  },
+  "show_notification": true
+}

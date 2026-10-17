@@ -1,0 +1,10 @@
+{
+  "exclusions": [
+    "botania:disposable",
+    "botania:semi_disposable",
+    "botania:contributor_headflowers",
+    "botania:loonium_blacklist",
+    "botania:terra_shatterer_blacklist",
+    "botania:ring_of_magnetization_blacklist"
+  ]
+}

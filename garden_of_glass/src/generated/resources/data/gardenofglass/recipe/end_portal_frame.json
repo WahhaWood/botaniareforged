@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "item": "botania:gaia_spirit"
+    },
+    "O": {
+      "item": "minecraft:obsidian"
+    }
+  },
+  "pattern": [
+    "OGO"
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecraft:end_portal_frame"
+  }
+}

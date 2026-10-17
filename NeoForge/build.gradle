@@ -1,0 +1,126 @@
+plugins {
+    id("multiloader-loader")
+    alias(libs.plugins.mdg)
+}
+
+repositories {
+    maven {
+        name = "C4"
+        url = "https://maven.theillusivec4.top/"
+    }
+}
+
+neoForge {
+    version = neoforge_version
+    // Automatically enable neoforge AccessTransformers if the file exists
+    def at = project(":Xplat").file("src/main/resources/META-INF/accesstransformer.cfg")
+    if (at.exists()) {
+        accessTransformers.from(at.absolutePath)
+    }
+
+    parchment {
+        minecraftVersion = minecraft_version
+        mappingsVersion = parchment_version
+    }
+
+    runs {
+        configureEach {
+            systemProperty("neoforge.enabledGameTestNamespaces", mod_id)
+            systemProperty("fml.earlyprogresswindow", "false")
+            ideName = "NeoForge ${it.name.capitalize()} (${project.path})"
+            gameDirectory = file("../run/")
+        }
+
+        client {
+            client()
+            systemProperty("neoforge.logging.console.level", "debug")
+        }
+        neoforgeDatagen {
+            data()
+            programArguments.addAll("--mod", mod_id, "--all",
+                    "--output", file("src/generated/resources/").getAbsolutePath(),
+                    "--existing", file("src/main/resources/").getAbsolutePath())
+        }
+        gardenOfGlassDatagen {
+            data()
+            programArguments.addAll("--mod", mod_id, "--all",
+                    "--output", file("../garden_of_glass/src/generated/resources/").getAbsolutePath(),
+                    "--existing", file("../garden_of_glass/src/main/resources/").getAbsolutePath())
+            systemProperty("botania.gog_datagen", "1")
+        }
+        server {
+            server()
+            systemProperty("neoforge.logging.console.level", "debug")
+            // GameTestHooks.isGametestEnabled() gates the whole discovery path,
+            // and without it the server logs "No tests found" and /test runall
+            // has nothing to run. Registration happens on the mod bus, so the
+            // listener in BotaniaGameTests only fires when this is set.
+            systemProperty("neoforge.enableGameTest", "true")
+            programArgument("--nogui")
+        }
+        // A dedicated gametest server: it builds a flat world, runs every
+        // registered test, prints a progress bar and a closing summary, then
+        // exits by itself. tools/run_gametests.py drives this one.
+        gameTestServer {
+            server()
+            systemProperty("neoforge.logging.console.level", "debug")
+            systemProperty("neoforge.enableGameTest", "true")
+            systemProperty("neoforge.gameTestServer", "true")
+            gameDirectory = file("../run-gametest/")
+            programArgument("--nogui")
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+        }
+    }
+}
+
+dependencies {
+    compileOnly(libs.jetbrains.annotations)
+
+    implementation(libs.patchouli.neoforge)
+    compileOnly(variantOf(libs.curios) { classifier("api") })
+
+    // Applied Energistics 2 — needed to compile/run the AE2 integration (Applied Botanics)
+    compileOnly(libs.ae2) { transitive = false }
+    runtimeOnly(libs.ae2)
+
+    // KubeJS. compileOnly because the plugin class is only ever loaded by
+    // KubeJS itself, so a pack without KubeJS never touches it and the mod
+    // declares no dependency on KubeJS. runtimeOnly so the dev runs actually
+    // have KubeJS present — otherwise the schema registration below is never
+    // exercised and a broken script API looks fine until a pack installs it.
+    compileOnly(libs.kubejs.neoforge)
+    runtimeOnly(libs.kubejs.neoforge)
+
+    compileOnly(variantOf(libs.emi.neoforge) { classifier("api") })
+    compileOnly(libs.jei.neoforge.api)
+    compileOnly(libs.rei.neoforge)
+
+    compileOnly(libs.ears)
+    compileOnly(libs.sodium.neoforge) { transitive = false }
+    compileOnly(libs.embeddium) { transitive = false }
+
+    runtimeOnly(libs.curios)
+
+    if (rootProject.hasProperty("load_override_emi")) {
+        runtimeOnly(libs.emi.neoforge)
+    } else if (rootProject.hasProperty("load_override_rei")) {
+        runtimeOnly(libs.rei.neoforge)
+    } else {
+        runtimeOnly(libs.jei.neoforge.full)
+    }
+
+    if (file("../garden_of_glass/gardenofglass-${gog_version}.jar").exists()) {
+        runtimeOnly(files("../garden_of_glass/gardenofglass-${gog_version}.jar"))
+    }
+}
+
+// Forward the server console to stdin so the game tests can be driven from a
+// script, e.g. `(sleep 60; echo "test runall"; echo stop) | ./gradlew :NeoForge:runServer`.
+tasks.named("runServer") {
+    standardInput = System.in
+}

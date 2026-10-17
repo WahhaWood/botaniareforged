@@ -1,0 +1,52 @@
+{
+  "type": "minecraft:equipment",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "value": {
+            "pools": [
+              {
+                "bonus_rolls": 0.0,
+                "entries": [
+                  {
+                    "type": "minecraft:item",
+                    "name": "minecraft:stone_sword"
+                  },
+                  {
+                    "type": "minecraft:item",
+                    "name": "minecraft:bow"
+                  }
+                ],
+                "functions": [
+                  {
+                    "function": "minecraft:enchant_randomly",
+                    "options": "#minecraft:on_random_loot"
+                  }
+                ],
+                "rolls": {
+                  "type": "minecraft:uniform",
+                  "max": 1.0,
+                  "min": -1.0
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "value": "botania:equipment/loonium/armor_fortress"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}

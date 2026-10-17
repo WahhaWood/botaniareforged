@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "botanicalextramachinery:crystal_ingot"
+    },
+    {
+      "item": "minecraft:redstone_block"
+    },
+    {
+      "item": "botanicalextramachinery:upgrade_cost_energy"
+    },
+    {
+      "item": "botanicalextramachinery:upgrade_pattern"
+    }
+  ],
+  "result": {
+    "id": "botanicalextramachinery:upgrade_storage_energy_1",
+    "count": 1
+  },
+  "show_notification": true
+}

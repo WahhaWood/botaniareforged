@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": {
+      "item": "botania:manasteel_ingot"
+    },
+    "Q": {
+      "item": "ae2:quartz_glass"
+    },
+    "S": {
+      "item": "botania:gaia_spirit"
+    }
+  },
+  "pattern": [
+    "QSQ",
+    "S S",
+    "III"
+  ],
+  "result": {
+    "count": 1,
+    "id": "botania:mana_cell_housing"
+  }
+}

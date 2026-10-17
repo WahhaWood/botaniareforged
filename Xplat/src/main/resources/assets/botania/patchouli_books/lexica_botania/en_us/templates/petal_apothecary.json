@@ -1,0 +1,70 @@
+{
+  "processor": "vazkii.botania.client.patchouli.processor.PetalApothecaryProcessor",
+  "components": [
+    {
+      "type": "patchouli:image",
+      "image": "botania:textures/gui/petal_overlay.png",
+      "x": 0,
+      "y": 6,
+      "width": 116,
+      "height": 106,
+      "u": 17,
+      "v": 8
+    },
+    {
+      "type": "patchouli:header",
+      "text": "#heading",
+      "x": -1,
+      "y": -3
+    },
+    {
+      "type": "patchouli:custom",
+      "class": "vazkii.botania.client.patchouli.component.RotatingRecipeComponent",
+      "x": -1,
+      "y": 19,
+      "recipe_type": "petal_apothecary",
+      "recipe_name": "#recipe"
+    },
+    {
+      "type": "patchouli:item",
+      "item": "#output",
+      "framed": "false",
+      "link_recipe": true,
+      "x": 87,
+      "y": 16
+    },
+    {
+      "type": "patchouli:item",
+      "item": "minecraft:water_bucket",
+      "framed": "false",
+      "x": 41,
+      "y": 46
+    },
+    {
+      "type": "patchouli:item",
+      "item": "#reagent",
+      "framed": "false",
+      "x": 57,
+      "y": 46
+    },
+    {
+      "type": "patchouli:item",
+      "item": "botania:petal_apothecary",
+      "framed": "false",
+      "x": 49,
+      "y": 61
+    },
+    {
+      "type": "patchouli:text",
+      "text": "botaniamisc.shiftToStopSpin",
+      "color": "-67000000",
+      "x": 13,
+      "y": 108
+    },
+    {
+      "type": "patchouli:text",
+      "text": "#text",
+      "y": 124
+    }
+  ]
+}

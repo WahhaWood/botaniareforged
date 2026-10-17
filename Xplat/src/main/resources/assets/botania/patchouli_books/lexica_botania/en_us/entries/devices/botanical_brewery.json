@@ -1,0 +1,108 @@
+{
+  "name": "botania.entry.brewery",
+  "category": "botania:devices",
+  "icon": "botania:botanical_brewery",
+  "advancement": "botania:main/runic_altar_pickup",
+  "pages": [
+    {
+      "type": "text",
+      "text": "botania.page.brewery0"
+    },
+    {
+      "type": "text",
+      "text": "botania.page.brewery1"
+    },
+    {
+      "type": "crafting",
+      "text": "botania.page.brewery2",
+      "recipe": "botania:botanical_brewery"
+    },
+    {
+      "type": "crafting",
+      "text": "botania.page.brewery3",
+      "recipe": "botania:managlass_vial"
+    },
+    {
+      "type": "text",
+      "text": "botania.page.brewery4"
+    },
+    {
+      "type": "botania:brew",
+      "text": "botania.page.brewery5a",
+      "flavor": "botania.page.brewery5b",
+      "recipe": "botania:brew/fleetfeet"
+    },
+    {
+      "type": "botania:brew",
+      "text": "botania.page.brewery6a",
+      "flavor": "botania.page.brewery6b",
+      "recipe": "botania:brew/vigor"
+    },
+    {
+      "type": "botania:brew",
+      "text": "botania.page.brewery7a",
+      "flavor": "botania.page.brewery7b",
+      "recipe": "botania:brew/adrenaline"
+    },
+    {
+      "type": "botania:brew",
+      "text": "botania.page.brewery8a",
+      "flavor": "botania.page.brewery8b",
+      "recipe": "botania:brew/mending"
+    },
+    {
+      "type": "botania:brew",
+      "text": "botania.page.brewery9a",
+      "flavor": "botania.page.brewery9b",
+      "recipe": "botania:brew/upsurging"
+    },
+    {
+      "type": "botania:brew",
+      "text": "botania.page.brewery10a",
+      "flavor": "botania.page.brewery10b",
+      "recipe": "botania:brew/revitalization"
+    },
+    {
+      "type": "botania:brew",
+      "text": "botania.page.brewery17a",
+      "flavor": "botania.page.brewery17b",
+      "recipe": "botania:brew/restoration"
+    },
+    {
+      "type": "botania:brew",
+      "text": "botania.page.brewery11a",
+      "flavor": "botania.page.brewery11b",
+      "recipe": "botania:brew/fortitude"
+    },
+    {
+      "type": "botania:brew",
+      "text": "botania.page.brewery12a",
+      "flavor": "botania.page.brewery12b",
+      "recipe": "botania:brew/magmaskin"
+    },
+    {
+      "type": "botania:brew",
+      "text": "botania.page.brewery13a",
+      "flavor": "botania.page.brewery13b",
+      "recipe": "botania:brew/gills"
+    },
+    {
+      "type": "botania:brew",
+      "text": "botania.page.brewery14a",
+      "flavor": "botania.page.brewery14b",
+      "recipe": "botania:brew/cloaking"
+    },
+    {
+      "type": "botania:brew",
+      "text": "botania.page.brewery15a",
+      "flavor": "botania.page.brewery15b",
+      "recipe": "botania:brew/owlsight"
+    },
+    {
+      "type": "botania:brew",
+      "text": "botania.page.brewery16a",
+      "flavor": "botania.page.brewery16b",
+      "recipe": "botania:brew/shielding"
+    }
+  ]
+}

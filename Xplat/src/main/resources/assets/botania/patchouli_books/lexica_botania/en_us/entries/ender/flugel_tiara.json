@@ -1,0 +1,48 @@
+{
+  "name": "botania.entry.flightTiara",
+  "category": "botania:ender",
+  "icon": "botania:flugel_tiara",
+  "entry_color": "aa00",
+  "advancement": "botania:main/elf_lexicon_pickup",
+  "pages": [
+    {
+      "type": "text",
+      "text": "botania.page.flightTiara0"
+    },
+    {
+      "type": "text",
+      "text": "botania.page.flightTiara4"
+    },
+    {
+      "type": "text",
+      "text": "botania.page.flightTiara5"
+    },
+    {
+      "type": "text",
+      "text": "botania.page.flightTiara6"
+    },
+    {
+      "type": "crafting",
+      "text": "botania.page.flightTiara1",
+      "recipe": "botania:flugel_tiara"
+    },
+    {
+      "type": "text",
+      "text": "botania.page.flightTiara2"
+    },
+    {
+      "type": "botania:crafting_multi",
+      "text": "botania.page.flightTiara3",
+      "recipes": [
+        "botania:flugel_tiara_1",
+        "botania:flugel_tiara_2",
+        "botania:flugel_tiara_3",
+        "botania:flugel_tiara_4",
+        "botania:flugel_tiara_5",
+        "botania:flugel_tiara_6",
+        "botania:flugel_tiara_7",
+        "botania:flugel_tiara_8"
+      ]
+    }
+  ]
+}

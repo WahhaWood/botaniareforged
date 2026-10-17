@@ -1,0 +1,33 @@
+{
+  "parent": "botania:main/mana_pool_pickup",
+  "criteria": {
+    "rune": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#botania:runes"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.botania:runePickup.desc"
+    },
+    "icon": {
+      "count": 1,
+      "id": "botania:runic_altar"
+    },
+    "title": {
+      "translate": "advancement.botania:runePickup"
+    }
+  },
+  "requirements": [
+    [
+      "rune"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

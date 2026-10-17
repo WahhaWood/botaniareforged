@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "botania"
+    }
+  ],
+  "pattern": [
+    "PPP",
+    "POP",
+    "PPP"
+  ],
+  "key": {
+    "P": {
+      "item": "botania:mana_pearl"
+    },
+    "O": {
+      "item": "voltany:overclock_2"
+    }
+  },
+  "result": {
+    "count": 1,
+    "id": "voltany:overclock_3"
+  }
+}

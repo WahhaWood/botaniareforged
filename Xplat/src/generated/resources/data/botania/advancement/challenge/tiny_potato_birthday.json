@@ -1,0 +1,30 @@
+{
+  "parent": "botania:challenge/root",
+  "criteria": {
+    "code_triggered": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.botania:tinyPotatoBirthday.desc"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "botania:tiny_potato"
+    },
+    "title": {
+      "translate": "advancement.botania:tinyPotatoBirthday"
+    }
+  },
+  "requirements": [
+    [
+      "code_triggered"
+    ]
+  ],
+  "rewards": {
+    "experience": 40
+  },
+  "sends_telemetry_event": true
+}

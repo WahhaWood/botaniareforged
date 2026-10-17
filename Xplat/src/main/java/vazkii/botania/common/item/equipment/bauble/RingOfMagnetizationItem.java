@@ -1,0 +1,123 @@
+/*
+ * This class is distributed as part of the Botania Mod.
+ * Get the Source Code in github:
+ * https://github.com/Vazkii/Botania
+ *
+ * Botania is Open Source and distributed under the
+ * Botania License: http://botaniamod.net/license.php
+ */
+package vazkii.botania.common.item.equipment.bauble;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+
+import vazkii.botania.api.BotaniaAPI;
+import vazkii.botania.api.item.Relic;
+import vazkii.botania.api.mana.ManaItem;
+import vazkii.botania.client.fx.SparkleParticleData;
+import vazkii.botania.common.component.BotaniaDataComponents;
+import vazkii.botania.common.handler.EquipmentHandler;
+import vazkii.botania.common.helper.MathHelper;
+import vazkii.botania.common.lib.BotaniaTags;
+import vazkii.botania.mixin.ItemEntityAccessor;
+import vazkii.botania.xplat.BotaniaConfig;
+import vazkii.botania.xplat.XplatAbstractions;
+
+import java.util.List;
+
+public class RingOfMagnetizationItem extends BaubleItem {
+
+	public static final int DEFAULT_RANGE = 6;
+	public static final int DEFAULT_GREATER_RANGE = 16;
+
+	public RingOfMagnetizationItem(Properties properties) {
+		super(properties);
+	}
+
+	public static void onTossItem(Player player) {
+		ItemStack ring = EquipmentHandler.findOrEmpty(s -> s.getItem() instanceof RingOfMagnetizationItem, player);
+		if (!ring.isEmpty()) {
+			player.getCooldowns().addCooldown(ring.getItem(), 100);
+		}
+	}
+
+	@Override
+	public void onWornTick(ItemStack stack, LivingEntity living) {
+		super.onWornTick(stack, living);
+
+		if (living.isSpectator()) {
+			return;
+		}
+
+		if (living instanceof Player player) {
+			boolean isOnCooldown = player.getCooldowns().isOnCooldown(this);
+			if (BotaniaAPI.instance().hasSolegnoliaAround(living)) {
+				if (!isOnCooldown) {
+					player.getCooldowns().addCooldown(this, 2);
+				}
+				return;
+			}
+
+			if (!isOnCooldown) {
+				if (living.isShiftKeyDown() == BotaniaConfig.common().invertMagnetRing()) {
+					double x = living.getX();
+					double y = living.getY() + 0.5 * living.getEyeHeight();
+					double z = living.getZ();
+
+					int range = stack.getOrDefault(BotaniaDataComponents.RANGE, DEFAULT_RANGE);
+					List<ItemEntity> items = living.level().getEntitiesOfClass(ItemEntity.class,
+							new AABB(x - range, y - range, z - range, x + range, y + range, z + range));
+					int pulled = 0;
+					for (ItemEntity item : items) {
+						if (canPullItem(item)) {
+							if (pulled > 200) {
+								break;
+							}
+
+							MathHelper.setEntityMotionFromVector(item, new Vec3(x, y, z), 0.45F);
+							if (living.level().isClientSide()) {
+								boolean red = living.level().getRandom().nextBoolean();
+								float r = red ? 1F : 0F;
+								float b = red ? 0F : 1F;
+								SparkleParticleData data = SparkleParticleData.sparkle(1F, r, 0F, b, 3);
+								living.level().addParticle(data, item.getX(), item.getY(), item.getZ(), 0, 0, 0);
+							}
+							pulled++;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private static boolean canPullItem(ItemEntity item) {
+		int pickupDelay = ((ItemEntityAccessor) item).botania_getPickupDelay();
+		if (!item.isAlive() || pickupDelay >= 40
+				|| BotaniaAPI.instance().hasSolegnoliaAround(item)
+				|| XplatAbstractions.INSTANCE.preventsRemoteMovement(item)) {
+			return false;
+		}
+
+		ItemStack stack = item.getItem();
+		if (stack.isEmpty()
+				|| ManaItem.LOOKUP.find(stack) != null
+				|| Relic.LOOKUP.find(stack) != null
+				|| stack.is(BotaniaTags.Items.MAGNET_RING_IGNORED)) {
+			return false;
+		}
+
+		BlockPos pos = item.blockPosition();
+
+		if (item.level().getBlockState(pos).is(BotaniaTags.Blocks.SHIELDS_FROM_MAGNET_RING)) {
+			return false;
+		}
+
+		return !item.level().getBlockState(pos.below()).is(BotaniaTags.Blocks.SHIELDS_FROM_MAGNET_RING);
+	}
+
+}

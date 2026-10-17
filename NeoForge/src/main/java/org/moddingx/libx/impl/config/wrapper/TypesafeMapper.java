@@ -1,0 +1,46 @@
+package org.moddingx.libx.impl.config.wrapper;
+
+import com.google.gson.JsonElement;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import org.moddingx.libx.config.mapper.ValueMapper;
+
+public class TypesafeMapper extends JsonTypesafeMapper<Object> {
+    
+    private TypesafeMapper(ValueMapper<?, ?> mapper) {
+        //noinspection unchecked
+        super((ValueMapper<Object, ?>) mapper);
+    }
+    
+    public static TypesafeMapper of(ValueMapper<?, ?> mapper) {
+        if (mapper instanceof TypesafeMapper tm) {
+            return tm;
+        } else {
+            return new TypesafeMapper(mapper);
+        }
+    }
+
+    @Override
+    public JsonElement toJson(Object value) {
+        if (this.wrapped.type().isAssignableFrom(value.getClass())) {
+            return this.wrapped.toJson(value);
+        } else {
+            throw new IllegalArgumentException("Type mismatch in config mapper toJson: Expected " + this.wrapped.type() + ", got " + value.getClass());
+        }
+    }
+
+    @Override
+    public StreamCodec<? super FriendlyByteBuf, Object> streamCodec() {
+        StreamCodec<? super FriendlyByteBuf, Object> codec = this.wrapped.streamCodec();
+        return StreamCodec.of(
+                (FriendlyByteBuf buf, Object value) -> {
+                    if (this.wrapped.type().isAssignableFrom(value.getClass())) {
+                        codec.encode(buf, value);
+                     } else {
+                         throw new IllegalArgumentException("Type mismatch in config mapper write: Expected " + this.wrapped.type() + ", got " + value.getClass());
+                     }
+                },
+                codec::decode
+        );
+    }
+}

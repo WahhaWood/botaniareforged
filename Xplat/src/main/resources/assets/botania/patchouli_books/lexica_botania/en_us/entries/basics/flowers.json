@@ -1,0 +1,167 @@
+{
+  "name": "botania.entry.flowers",
+  "category": "botania:basics",
+  "icon": "botania:pink_mystical_flower",
+  "priority": true,
+  "turnin": "botania:main/flower_pickup_lexicon",
+  "pages": [
+    {
+      "type": "text",
+      "text": "botania.page.flowers0"
+    },
+    {
+      "type": "image",
+      "text": "botania.page.flowers1",
+      "images": [
+        "botania:textures/gui/entries/flowers.png"
+      ]
+    },
+    {
+      "type": "text",
+      "text": "botania.page.flowers2"
+    },
+    {
+      "type": "botania:crafting_multi",
+      "heading": "botania.page.flowers14",
+      "text": "botania.page.flowers3",
+      "recipes": [
+        "botania:white_mystical_petal_from_white_mystical_flower",
+        "botania:orange_mystical_petal_from_orange_mystical_flower",
+        "botania:magenta_mystical_petal_from_magenta_mystical_flower",
+        "botania:light_blue_mystical_petal_from_light_blue_mystical_flower",
+        "botania:yellow_mystical_petal_from_yellow_mystical_flower",
+        "botania:lime_mystical_petal_from_lime_mystical_flower",
+        "botania:pink_mystical_petal_from_pink_mystical_flower",
+        "botania:gray_mystical_petal_from_gray_mystical_flower",
+        "botania:light_gray_mystical_petal_from_light_gray_mystical_flower",
+        "botania:cyan_mystical_petal_from_cyan_mystical_flower",
+        "botania:purple_mystical_petal_from_purple_mystical_flower",
+        "botania:blue_mystical_petal_from_blue_mystical_flower",
+        "botania:brown_mystical_petal_from_brown_mystical_flower",
+        "botania:green_mystical_petal_from_green_mystical_flower",
+        "botania:red_mystical_petal_from_red_mystical_flower",
+        "botania:black_mystical_petal_from_black_mystical_flower"
+      ]
+    },
+    {
+      "type": "text",
+      "text": "botania.page.flowers17"
+    },
+    {
+      "type": "botania:crafting_multi",
+      "heading": "botania.page.flowers15",
+      "text": "botania.page.flowers5",
+      "recipes": [
+        "botania:dye_white",
+        "botania:dye_orange",
+        "botania:dye_magenta",
+        "botania:dye_light_blue",
+        "botania:dye_yellow",
+        "botania:dye_lime",
+        "botania:dye_pink",
+        "botania:dye_gray",
+        "botania:dye_light_gray",
+        "botania:dye_cyan",
+        "botania:dye_purple",
+        "botania:dye_blue",
+        "botania:dye_brown",
+        "botania:dye_green",
+        "botania:dye_red",
+        "botania:dye_black"
+      ]
+    },
+    {
+      "type": "text",
+      "text": "botania.page.flowers6"
+    },
+    {
+      "type": "crafting",
+      "flag": "!mod:gardenofglass",
+      "text": "botania.page.flowers8",
+      "recipe": "botania:floral_fertilizer"
+    },
+    {
+      "type": "crafting",
+      "flag": "|debug,mod:gardenofglass",
+      "text": "botania.page.flowers8",
+      "recipe": "gardenofglass:floral_fertilizer_from_dye"
+    },
+    {
+      "type": "text",
+      "text": "botania.page.flowers18"
+    },
+    {
+      "type": "botania:crafting_multi",
+      "heading": "botania.page.flowers14",
+      "text": "botania.page.flowers11",
+      "recipes": [
+        "botania:white_mystical_petal_from_white_tall_mystical_flower",
+        "botania:orange_mystical_petal_from_orange_tall_mystical_flower",
+        "botania:magenta_mystical_petal_from_magenta_tall_mystical_flower",
+        "botania:light_blue_mystical_petal_from_light_blue_tall_mystical_flower",
+        "botania:yellow_mystical_petal_from_yellow_tall_mystical_flower",
+        "botania:lime_mystical_petal_from_lime_tall_mystical_flower",
+        "botania:pink_mystical_petal_from_pink_tall_mystical_flower",
+        "botania:gray_mystical_petal_from_gray_tall_mystical_flower",
+        "botania:light_gray_mystical_petal_from_light_gray_tall_mystical_flower",
+        "botania:cyan_mystical_petal_from_cyan_tall_mystical_flower",
+        "botania:purple_mystical_petal_from_purple_tall_mystical_flower",
+        "botania:blue_mystical_petal_from_blue_tall_mystical_flower",
+        "botania:brown_mystical_petal_from_brown_tall_mystical_flower",
+        "botania:green_mystical_petal_from_green_tall_mystical_flower",
+        "botania:red_mystical_petal_from_red_tall_mystical_flower",
+        "botania:black_mystical_petal_from_black_tall_mystical_flower"
+      ]
+    },
+    {
+      "type": "botania:crafting_multi",
+      "heading": "botania.page.flowers16",
+      "text": "botania.page.flowers9",
+      "recipes": [
+        "botania:white_petal_block",
+        "botania:orange_petal_block",
+        "botania:magenta_petal_block",
+        "botania:light_blue_petal_block",
+        "botania:yellow_petal_block",
+        "botania:lime_petal_block",
+        "botania:pink_petal_block",
+        "botania:gray_petal_block",
+        "botania:light_gray_petal_block",
+        "botania:cyan_petal_block",
+        "botania:purple_petal_block",
+        "botania:blue_petal_block",
+        "botania:brown_petal_block",
+        "botania:green_petal_block",
+        "botania:red_petal_block",
+        "botania:black_petal_block"
+      ]
+    },
+    {
+      "type": "botania:crafting_multi",
+      "heading": "botania.page.flowers14",
+      "text": "botania.page.flowers13",
+      "recipes": [
+        "botania:white_mystical_petal_from_petal_block",
+        "botania:orange_mystical_petal_from_petal_block",
+        "botania:magenta_mystical_petal_from_petal_block",
+        "botania:light_blue_mystical_petal_from_petal_block",
+        "botania:yellow_mystical_petal_from_petal_block",
+        "botania:lime_mystical_petal_from_petal_block",
+        "botania:pink_mystical_petal_from_petal_block",
+        "botania:gray_mystical_petal_from_petal_block",
+        "botania:light_gray_mystical_petal_from_petal_block",
+        "botania:cyan_mystical_petal_from_petal_block",
+        "botania:purple_mystical_petal_from_petal_block",
+        "botania:blue_mystical_petal_from_petal_block",
+        "botania:brown_mystical_petal_from_petal_block",
+        "botania:green_mystical_petal_from_petal_block",
+        "botania:red_mystical_petal_from_petal_block",
+        "botania:black_mystical_petal_from_petal_block"
+      ]
+    }
+  ],
+  "extra_recipe_mappings": {
+    "tag:botania:small_mystical_flowers": 1,
+    "tag:botania:tall_mystical_flowers": 9
+  }
+}

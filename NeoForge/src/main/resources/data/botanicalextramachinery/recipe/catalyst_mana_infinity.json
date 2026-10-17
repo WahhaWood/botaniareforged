@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "botanicalextramachinery:catalyst_pattern"
+    },
+    {
+      "item": "botanicalextramachinery:crimson_dragonstone_block"
+    },
+    {
+      "item": "botanicalextramachinery:crimson_spark"
+    }
+  ],
+  "result": {
+    "id": "botanicalextramachinery:catalyst_mana_infinity",
+    "count": 1
+  },
+  "show_notification": true
+}

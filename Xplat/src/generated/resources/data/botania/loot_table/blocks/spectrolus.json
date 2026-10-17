@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:copy_components",
+              "include": [
+                "botania:next_color",
+                "botania:color_sequence"
+              ],
+              "source": "block_entity"
+            }
+          ],
+          "name": "botania:spectrolus"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}

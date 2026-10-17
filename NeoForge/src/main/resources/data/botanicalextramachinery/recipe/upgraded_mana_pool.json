@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "a": {
+      "item": "botania:terrasteel_block"
+    },
+    "b": {
+      "item": "botanicalextramachinery:saffron_ingot"
+    },
+    "c": {
+      "item": "botanicalextramachinery:base_mana_pool"
+    },
+    "d": {
+      "item": "botanicalextramachinery:saffron_dragonstone_block"
+    }
+  },
+  "pattern": [
+    "aba",
+    "bcb",
+    "ddd"
+  ],
+  "result": {
+    "id": "botanicalextramachinery:upgraded_mana_pool",
+    "count": 1
+  },
+  "show_notification": true
+}

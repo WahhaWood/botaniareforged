@@ -1,0 +1,15 @@
+{
+  "values": [
+    "minecraft:dirt",
+    "minecraft:grass_block",
+    "minecraft:mycelium",
+    "minecraft:podzol",
+    "minecraft:rooted_dirt",
+    "botania:dry_grass",
+    "botania:golden_grass",
+    "botania:infused_grass",
+    "botania:mutated_grass",
+    "botania:scorched_grass",
+    "botania:vivid_grass"
+  ]
+}

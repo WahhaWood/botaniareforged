@@ -1,0 +1,10 @@
+{
+  "values": [
+    "#minecraft:base_stone_overworld",
+    "minecraft:infested_stone",
+    "#minecraft:dirt",
+    "#c:gravels",
+    "minecraft:snow",
+    "#minecraft:sand"
+  ]
+}

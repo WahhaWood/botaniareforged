@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "a": {
+      "item": "botanicalextramachinery:saffron_ingot_block"
+    },
+    "b": {
+      "item": "botanicalextramachinery:crimson_ingot"
+    },
+    "c": {
+      "item": "botanicalextramachinery:advanced_runic_altar"
+    },
+    "d": {
+      "item": "botanicalextramachinery:crimson_dragonstone_block"
+    }
+  },
+  "pattern": [
+    "aba",
+    "bcb",
+    "ddd"
+  ],
+  "result": {
+    "id": "botanicalextramachinery:ultimate_runic_altar",
+    "count": 1
+  },
+  "show_notification": true
+}

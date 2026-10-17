@@ -1,0 +1,20 @@
+{
+  "itemGroup.voltany": "Voltany",
+  "block.voltany.mana_generator": "Генератор маны",
+  "item.voltany.overclock_1": "Разгон I",
+  "item.voltany.overclock_2": "Разгон II",
+  "item.voltany.overclock_3": "Разгон III",
+  "item.voltany.dispersion_1": "Распределитель маны I",
+  "item.voltany.dispersion_2": "Распределитель маны II",
+  "item.voltany.dispersion_3": "Распределитель маны III",
+  "item.voltany.efficiency_core": "Ядро эффективности",
+  "item.voltany.spark_resonator": "Спарк-резонатор",
+  "tooltip.voltany.upgrade.overclock_1": "+50% к генерации маны",
+  "tooltip.voltany.upgrade.overclock_2": "+100% к генерации маны",
+  "tooltip.voltany.upgrade.overclock_3": "+100% к генерации; стак цветков до 8 шт",
+  "tooltip.voltany.upgrade.dispersion_1": "Отдаёт ману всем пулам в радиусе 5",
+  "tooltip.voltany.upgrade.dispersion_2": "Отдаёт ману всем пулам в радиусе 15",
+  "tooltip.voltany.upgrade.dispersion_3": "Отдаёт ману всем пулам в радиусе 30",
+  "tooltip.voltany.upgrade.efficiency": "Меньше FE на единицу маны",
+  "tooltip.voltany.upgrade.spark": "Отдаёт ману в сеть искр Botania"
+}

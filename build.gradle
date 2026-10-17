@@ -1,0 +1,20 @@
+plugins {
+    id("idea")
+    alias(libs.plugins.spotless) apply false
+}
+
+println("Java: ${System.getProperty("java.version")}, JVM: ${System.getProperty("java.vm.version")} (${System.getProperty("java.vendor")}), Arch: ${System.getProperty("os.arch")}")
+
+idea.module {
+    downloadJavadoc = true
+    downloadSources = true
+}
+
+// Xplat's own datagen runs off the NeoForge project, since Xplat is compiled
+// with NeoForge's toolchain and has no separate run configuration.
+tasks.register("runAllDatagen") {
+    dependsOn(
+            project("NeoForge").tasks.named("runNeoforgeDatagen"),
+            project("NeoForge").tasks.named("runGardenOfGlassDatagen")
+    )
+}

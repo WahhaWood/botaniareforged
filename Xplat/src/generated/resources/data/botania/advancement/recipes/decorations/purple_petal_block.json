@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_purple_mystical_petal": {
+      "conditions": {
+        "items": [
+          {
+            "items": "botania:purple_mystical_petal"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "botania:purple_petal_block"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_purple_mystical_petal"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "botania:purple_petal_block"
+    ]
+  }
+}

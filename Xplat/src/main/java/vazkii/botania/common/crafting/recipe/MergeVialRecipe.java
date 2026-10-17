@@ -1,0 +1,130 @@
+/*
+ * This class is distributed as part of the Botania Mod.
+ * Get the Source Code in github:
+ * https://github.com/Vazkii/Botania
+ *
+ * Botania is Open Source and distributed under the
+ * Botania License: http://botaniamod.net/license.php
+ */
+package vazkii.botania.common.crafting.recipe;
+
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.item.crafting.CustomRecipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;
+import net.minecraft.world.level.Level;
+
+import vazkii.botania.api.brew.Brew;
+import vazkii.botania.common.item.brew.BaseBrewItem;
+
+import java.util.Objects;
+
+public class MergeVialRecipe extends CustomRecipe {
+	public static final RecipeSerializer<MergeVialRecipe> SERIALIZER = new SimpleCraftingRecipeSerializer<>(MergeVialRecipe::new);
+
+	public MergeVialRecipe(CraftingBookCategory craftingBookCategory) {
+		super(craftingBookCategory);
+	}
+
+	@Override
+	public boolean matches(CraftingInput inv, Level worldIn) {
+		int count = 0;
+		Brew brew = null;
+
+		for (int i = 0; i < inv.size(); ++i) {
+			ItemStack stack = inv.getItem(i);
+			if (stack.isEmpty()) {
+				continue;
+			}
+
+			if (!(stack.getItem() instanceof BaseBrewItem vial)) {
+				return false;
+			}
+
+			if (brew == null) {
+				brew = vial.getBrew(stack);
+			} else if (brew != vial.getBrew(stack)) {
+				return false;
+			}
+			count++;
+		}
+
+		return count > 1;
+	}
+
+	@Override
+	public ItemStack assemble(CraftingInput inv, HolderLookup.Provider registries) {
+		ItemStack firstStack = ItemStack.EMPTY;
+		BaseBrewItem brew = null;
+		int swigs = 0;
+
+		for (int i = 0; i < inv.size(); i++) {
+			ItemStack stack = inv.getItem(i);
+			if (stack.isEmpty()) {
+				continue;
+			}
+
+			if (brew == null) {
+				firstStack = stack.copy();
+				brew = ((BaseBrewItem) stack.getItem());
+			}
+			swigs += brew.getSwigsLeft(stack);
+			if (swigs >= brew.getSwigs(stack)) {
+				swigs = brew.getSwigs(stack);
+				break;
+			}
+		}
+
+		Objects.requireNonNull(brew).setSwigsLeft(firstStack, swigs);
+		return firstStack;
+	}
+
+	@Override
+	public NonNullList<ItemStack> getRemainingItems(CraftingInput inv) {
+		NonNullList<ItemStack> remaining = NonNullList.withSize(inv.size(), ItemStack.EMPTY);
+
+		boolean foundFirst = false;
+		int swigs = 0;
+		int maxSwigs = 0;
+
+		for (int i = 0; i < inv.size(); i++) {
+			ItemStack stack = inv.getItem(i);
+			if (stack.isEmpty()) {
+				continue;
+			}
+
+			BaseBrewItem brew = ((BaseBrewItem) stack.getItem());
+			if (!foundFirst) {
+				foundFirst = true;
+				swigs = brew.getSwigsLeft(stack);
+				maxSwigs = brew.getSwigs(stack);
+				continue;
+			}
+
+			swigs += brew.getSwigsLeft(stack);
+			if (swigs > maxSwigs) {
+				brew.setSwigsLeft(stack, swigs - maxSwigs);
+				swigs = maxSwigs;
+				remaining.set(i, stack.copy());
+			} else {
+				remaining.set(i, brew.getBaseStack());
+			}
+		}
+
+		return remaining;
+	}
+
+	@Override
+	public boolean canCraftInDimensions(int width, int height) {
+		return width * height > 2;
+	}
+
+	@Override
+	public RecipeSerializer<?> getSerializer() {
+		return SERIALIZER;
+	}
+}

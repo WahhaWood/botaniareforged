@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "botanicalextramachinery:catalyst_pattern"
+    },
+    {
+      "item": "minecraft:oak_log"
+    },
+    {
+      "item": "botania:rune_of_sloth"
+    }
+  ],
+  "result": {
+    "id": "botanicalextramachinery:catalyst_wood_infinity",
+    "count": 1
+  },
+  "show_notification": true
+}
