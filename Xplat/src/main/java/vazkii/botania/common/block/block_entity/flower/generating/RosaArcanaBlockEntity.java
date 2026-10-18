@@ -26,6 +26,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
@@ -40,16 +41,69 @@ import vazkii.botania.network.clientbound.FlowerTakeItemEffectPacket;
 import vazkii.botania.xplat.BotaniaConfig;
 import vazkii.botania.xplat.XplatAbstractions;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class RosaArcanaBlockEntity extends GeneratingFlowerBlockEntity {
 	private static final int MANA_PER_XP = 50;
 	private static final int RANGE = 1;
 	public static final int PLAYER_TAKE_XP_DELAY = 10;
+	/**
+	 * Loaded roses of each level. Every XP orb looks for a rose nearby once a second; walking all block
+	 * entities of the chunks around it for that is costly next to a big base, the roses are few.
+	 */
+	private static final Map<Level, Set<RosaArcanaBlockEntity>> LOADED = Collections.synchronizedMap(new WeakHashMap<>());
 
 	public RosaArcanaBlockEntity(BlockPos pos, BlockState state) {
 		super(BotaniaBlockEntities.ROSA_ARCANA, pos, state);
+	}
+
+	@Override
+	public void clearRemoved() {
+		super.clearRemoved();
+		if (level != null) {
+			LOADED.computeIfAbsent(level, l -> ConcurrentHashMap.newKeySet()).add(this);
+		}
+	}
+
+	@Override
+	public void setRemoved() {
+		super.setRemoved();
+		if (level != null) {
+			Set<RosaArcanaBlockEntity> roses = LOADED.get(level);
+			if (roses != null) {
+				roses.remove(this);
+			}
+		}
+	}
+
+	/** Position of the closest loaded rose within {@code range} blocks of {@code center}, or null. */
+	@Nullable
+	public static BlockPos findClosest(Level level, BlockPos center, int range) {
+		Set<RosaArcanaBlockEntity> roses = LOADED.get(level);
+		if (roses == null || roses.isEmpty()) {
+			return null;
+		}
+
+		long limitSquared = (long) range * range;
+		long minDist = Long.MAX_VALUE;
+		BlockPos closestPos = null;
+		for (RosaArcanaBlockEntity rose : roses) {
+			long dist = MathHelper.distSqr(center, rose.getBlockPos());
+			if (dist <= limitSquared && dist < minDist && !rose.isRemoved()) {
+				minDist = dist;
+				closestPos = rose.getBlockPos();
+			}
+		}
+
+		return closestPos;
 	}
 
 	@Override
