@@ -11,8 +11,10 @@ package vazkii.botania.ae2.ae2;
 
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.neoforged.fml.ModList;
 
 import vazkii.botania.ae2.item.ManaCellItem;
 import vazkii.botania.ae2.item.cell.ManaCellInventory;
@@ -36,11 +38,13 @@ import vazkii.botania.test.TestingUtil;
 public class ManaCellTest {
 	private static final String ARENA = "botania:addon_arena";
 	/** What one byte of a cell is worth in mana, as the cell's own key type says. */
-	private static final int PER_BYTE = 500;
+	private static final int PER_BYTE = 1000;
 
 	private static final ManaCellItem[] CELLS = {
 			cell("mana_cell_1k"), cell("mana_cell_4k"), cell("mana_cell_16k"),
 			cell("mana_cell_64k"), cell("mana_cell_256k"),
+			cell("mana_cell_1m"), cell("mana_cell_4m"), cell("mana_cell_16m"),
+			cell("mana_cell_64m"), cell("mana_cell_256m"),
 	};
 
 	private static ManaCellItem cell(String id) {
@@ -200,6 +204,21 @@ public class ManaCellTest {
 				() -> "The cell maths assumes a fixed mana per byte");
 		TestingUtil.assertThat(ManaKey.KEY.getType() == ManaKeyType.TYPE,
 				() -> "ManaKey should use the mana key type");
+		helper.succeed();
+	}
+
+	@GameTest(template = ARENA)
+	public void megaCellRecipesNeedMegaCells(GameTestHelper helper) {
+		// the 1M-256M cells are crafted from MEGA components, so their recipes only load with MEGA Cells
+		boolean mega = ModList.get().isLoaded("megacells");
+		for (String size : new String[] { "1m", "256m" }) {
+			for (String id : new String[] { "mana_cell_" + size, "portable_mana_cell_" + size }) {
+				boolean loaded = helper.getLevel().getRecipeManager()
+						.byKey(ResourceLocation.fromNamespaceAndPath("botania", id)).isPresent();
+				TestingUtil.assertEquals(mega, loaded,
+						() -> "Recipe botania:" + id + (mega ? " is missing with" : " loaded without") + " MEGA Cells");
+			}
+		}
 		helper.succeed();
 	}
 }

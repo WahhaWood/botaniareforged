@@ -31,6 +31,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.EventPriority;
@@ -106,16 +107,11 @@ public class AppliedBotanicsForge {
 
             P2PTunnelAttunement.registerAttunementTag(ABItems.MANA_P2P_TUNNEL.get());
             StorageCells.addCellHandler(ManaCellHandler.INSTANCE);
-            StorageCellModels.registerModel(ABItems.MANA_CELL_1K.get(), AppliedBotanics.id("block/drive/cells/1k_mana_cell"));
-            StorageCellModels.registerModel(ABItems.PORTABLE_MANA_CELL_1K.get(), AppliedBotanics.id("block/drive/cells/1k_mana_cell"));
-            StorageCellModels.registerModel(ABItems.MANA_CELL_4K.get(), AppliedBotanics.id("block/drive/cells/4k_mana_cell"));
-            StorageCellModels.registerModel(ABItems.PORTABLE_MANA_CELL_4K.get(), AppliedBotanics.id("block/drive/cells/4k_mana_cell"));
-            StorageCellModels.registerModel(ABItems.MANA_CELL_16K.get(), AppliedBotanics.id("block/drive/cells/16k_mana_cell"));
-            StorageCellModels.registerModel(ABItems.PORTABLE_MANA_CELL_16K.get(), AppliedBotanics.id("block/drive/cells/16k_mana_cell"));
-            StorageCellModels.registerModel(ABItems.MANA_CELL_64K.get(), AppliedBotanics.id("block/drive/cells/64k_mana_cell"));
-            StorageCellModels.registerModel(ABItems.PORTABLE_MANA_CELL_64K.get(), AppliedBotanics.id("block/drive/cells/64k_mana_cell"));
-            StorageCellModels.registerModel(ABItems.MANA_CELL_256K.get(), AppliedBotanics.id("block/drive/cells/256k_mana_cell"));
-            StorageCellModels.registerModel(ABItems.PORTABLE_MANA_CELL_256K.get(), AppliedBotanics.id("block/drive/cells/256k_mana_cell"));
+            for (ABItems.Tier tier : ABItems.Tier.values()) {
+               ResourceLocation model = AppliedBotanics.id("block/drive/cells/" + tier.size() + "_mana_cell");
+               StorageCellModels.registerModel(ABItems.get(tier).get(), model);
+               StorageCellModels.registerModel(ABItems.getPortableCell(tier).get(), model);
+            }
          });
       });
    }

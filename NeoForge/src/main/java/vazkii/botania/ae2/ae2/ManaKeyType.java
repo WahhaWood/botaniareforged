@@ -29,9 +29,10 @@ public class ManaKeyType extends AEKeyType {
       return 500;
    }
 
+   /** 1000 mana per cell byte, so a 1k cell holds a million (one mana pool). */
    @Override
    public int getAmountPerByte() {
-      return 500;
+      return 1000;
    }
 
    @Nullable

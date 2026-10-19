@@ -12,6 +12,10 @@ Mod id `botania`. Applied Energistics 2 is required.
 
 On top of that the fork adds ME recipe machines: Botania crafting stations that work as AE2 grid nodes.
 
+ME mana cells hold 1000 mana per byte (a 1k cell is one full mana pool). With MEGA Cells installed there are also
+1M-256M mana cells and portable cells, crafted from the mana cell housing and a MEGA cell component. MEGA Cells'
+own mana cells stay off, since they look for the standalone Applied Botanics mod.
+
 The Gaia Simulator (`vazkii/botania/gaiasim/`) replays a hard-mode Gaia Guardian fight. The multiblock is a 3x3
 base (Block of Dragonstone in the centre, Blocks of Elementium on the sides, Blocks of Terrasteel in the corners),
 with the simulator on the centre and Gaia Pylons on the corners. A fight costs 1,000,000 mana (spreader or spark on
