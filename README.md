@@ -16,9 +16,10 @@ ME mana cells hold 1000 mana per byte (a 1k cell is one full mana pool). With ME
 1M-256M mana cells and portable cells, crafted from the mana cell housing and a MEGA cell component. MEGA Cells'
 own mana cells stay off, since they look for the standalone Applied Botanics mod.
 
-The Gaia Simulator (`vazkii/botania/gaiasim/`) replays a hard-mode Gaia Guardian fight. The multiblock is a 3x3
-base (Block of Dragonstone in the centre, Blocks of Elementium on the sides, Blocks of Terrasteel in the corners),
-with the simulator on the centre and Gaia Pylons on the corners. A fight costs 1,000,000 mana (spreader or spark on
+The Gaia Simulator (`vazkii/botania/gaiasim/`) replays a hard-mode Gaia Guardian fight. The multiblock is a 3x3 slab
+of Blocks of Elementium with a 3x3 base on it (Block of Dragonstone in the centre, Malachite Blocks on the sides,
+Blocks of Terrasteel in the corners), with the simulator on the centre and Gaia Pylons on the corners. It has a
+Lexicon entry (Alfhomancy) with a visualizable multiblock page. A fight costs 1,000,000 mana (spreader or spark on
 top) and 10,000 FE/t for 5 minutes. It rolls the Guardian's head table and the hard-mode reward of a lone winner.
 Relics are bound to whoever placed the simulator.
 

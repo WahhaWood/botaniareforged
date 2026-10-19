@@ -181,6 +181,7 @@ public class NeoForgeCommonInitializer {
 		PatchouliAPI.get().registerMultiblock(BuiltInRegistries.BLOCK.getKey(BotaniaBlocks.TERRESTRIAL_AGGLOMERATION_PLATE), TerrestrialAgglomerationPlateBlockEntity.MULTIBLOCK.get());
 		PatchouliAPI.get().registerMultiblock(BuiltInRegistries.BLOCK.getKey(BotaniaBlocks.MANA_ENCHANTER), ManaEnchanterBlockEntity.MULTIBLOCK.get());
 		PatchouliAPI.get().registerMultiblock(botaniaRL("gaia_ritual"), GaiaGuardianEntity.ARENA_MULTIBLOCK.get());
+		PatchouliAPI.get().registerMultiblock(botaniaRL("gaia_simulator"), vazkii.botania.gaiasim.GaiaSimulatorBlockEntity.MULTIBLOCK.get());
 
 		OrechidManager.registerListener();
 		BotaniaRecipeIngredientsCache.registerListener();

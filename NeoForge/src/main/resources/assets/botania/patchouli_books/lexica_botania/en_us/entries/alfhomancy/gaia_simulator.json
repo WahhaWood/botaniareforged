@@ -1,0 +1,37 @@
+{
+  "name": "botania.entry.gaiaSimulator",
+  "category": "botania:alfhomancy",
+  "icon": "botania:gaia_simulator",
+  "entry_color": "aa00",
+  "advancement": "botania:main/gaia_guardian_kill",
+  "sortnum": 10,
+  "pages": [
+    {
+      "type": "text",
+      "text": "botania.page.gaiaSimulator0"
+    },
+    {
+      "type": "crafting",
+      "text": "botania.page.gaiaSimulator1",
+      "recipe": "botania:gaia_simulator"
+    },
+    {
+      "type": "multiblock",
+      "multiblock_id": "botania:gaia_simulator",
+      "name": "botania.entry.gaiaSimulator",
+      "text": "botania.page.gaiaSimulator2",
+      "enable_visualize": true
+    },
+    {
+      "type": "text",
+      "text": "botania.page.gaiaSimulator3"
+    },
+    {
+      "type": "text",
+      "text": "botania.page.gaiaSimulator4"
+    }
+  ],
+  "extra_recipe_mappings": {
+    "botania:gaia_simulator": 1
+  }
+}

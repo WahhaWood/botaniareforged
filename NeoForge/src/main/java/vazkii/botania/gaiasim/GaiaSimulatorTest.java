@@ -1,5 +1,6 @@
 package vazkii.botania.gaiasim;
 
+import net.lmor.botanicalextramachinery.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -32,7 +33,8 @@ public class GaiaSimulatorTest {
 			for (int z = -1; z <= 1; z++) {
 				boolean corner = x != 0 && z != 0;
 				helper.setBlock(CONTROLLER.offset(x, -1, z), x == 0 && z == 0 ? BotaniaBlocks.DRAGONSTONE_BLOCK
-						: corner ? BotaniaBlocks.TERRASTEEL_BLOCK : BotaniaBlocks.ELEMENTIUM_BLOCK);
+						: corner ? BotaniaBlocks.TERRASTEEL_BLOCK : ModBlocks.malachiteIngotBlock);
+				helper.setBlock(CONTROLLER.offset(x, -2, z), BotaniaBlocks.ELEMENTIUM_BLOCK);
 				if (corner) {
 					helper.setBlock(CONTROLLER.offset(x, 0, z), BotaniaBlocks.GAIA_PYLON);
 				}

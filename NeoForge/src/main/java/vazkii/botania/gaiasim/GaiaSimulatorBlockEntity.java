@@ -1,7 +1,9 @@
 package vazkii.botania.gaiasim;
 
+import com.google.common.base.Suppliers;
 import com.mojang.authlib.GameProfile;
 
+import net.lmor.botanicalextramachinery.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -43,10 +45,13 @@ import vazkii.botania.common.entity.BotaniaEntities;
 import vazkii.botania.common.entity.GaiaGuardianEntity;
 import vazkii.botania.common.item.BotaniaItems;
 import vazkii.botania.common.loot.BotaniaLootTables;
+import vazkii.patchouli.api.IMultiblock;
+import vazkii.patchouli.api.PatchouliAPI;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 /**
  * Gaia Simulator controller. A fight starts once the multiblock is formed, the mana buffer holds
@@ -60,7 +65,7 @@ public class GaiaSimulatorBlockEntity extends BlockEntity implements MenuProvide
 	public static final int ENERGY_CAPACITY = 1_000_000;
 	public static final int FIGHT_TICKS = 5 * 60 * 20;
 	public static final int OUTPUT_SLOTS = 18;
-	/** Offsets of the pylons from the controller; the 3x3 base is one layer below. */
+	/** Offsets of the pylons from the controller; the base is one layer below, the Elementium slab two. */
 	public static final List<BlockPos> PYLONS = List.of(
 			new BlockPos(-1, 0, -1), new BlockPos(1, 0, -1), new BlockPos(-1, 0, 1), new BlockPos(1, 0, 1));
 	private static final int STRUCTURE_CHECK_INTERVAL = 20;
@@ -122,19 +127,26 @@ public class GaiaSimulatorBlockEntity extends BlockEntity implements MenuProvide
 		super(GaiaSimulator.BLOCK_ENTITY.get(), pos, state);
 	}
 
+	/**
+	 * Layers from the top: pylons and the controller, the 3x3 base (Dragonstone centre, Malachite sides, Terrasteel
+	 * corners), and a 3x3 slab of Elementium under it. Shown in the Lexicon and used to validate the structure.
+	 */
+	public static final Supplier<IMultiblock> MULTIBLOCK = Suppliers.memoize(() -> PatchouliAPI.get().makeMultiblock(
+			new String[][] {
+					{ "P_P", "_0_", "P_P" },
+					{ "TMT", "MDM", "TMT" },
+					{ "EEE", "EEE", "EEE" },
+			},
+			'P', BotaniaBlocks.GAIA_PYLON,
+			'0', GaiaSimulator.BLOCK.get(),
+			'T', BotaniaBlocks.TERRASTEEL_BLOCK,
+			'M', ModBlocks.malachiteIngotBlock,
+			'D', BotaniaBlocks.DRAGONSTONE_BLOCK,
+			'E', BotaniaBlocks.ELEMENTIUM_BLOCK
+	));
+
 	public static boolean isFormed(Level level, BlockPos pos) {
-		for (int x = -1; x <= 1; x++) {
-			for (int z = -1; z <= 1; z++) {
-				boolean corner = x != 0 && z != 0;
-				Block base = x == 0 && z == 0 ? BotaniaBlocks.DRAGONSTONE_BLOCK
-						: corner ? BotaniaBlocks.TERRASTEEL_BLOCK : BotaniaBlocks.ELEMENTIUM_BLOCK;
-				if (!level.getBlockState(pos.offset(x, -1, z)).is(base)
-						|| corner && !level.getBlockState(pos.offset(x, 0, z)).is(BotaniaBlocks.GAIA_PYLON)) {
-					return false;
-				}
-			}
-		}
-		return true;
+		return MULTIBLOCK.get().validate(level, pos) != null;
 	}
 
 	public void tickServer() {
