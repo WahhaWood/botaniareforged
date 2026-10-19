@@ -69,7 +69,8 @@ public class BotaniaGameTests {
 			vazkii.botania.ae2.ae2.ManaCellTest.class,
 			vazkii.botania.ae2.machine.MachineTest.class,
 			com.jykito.voltany.test.VoltanyFlowerTierTest.class,
-			com.jykito.voltany.test.VoltanyManaGeneratorTest.class);
+			com.jykito.voltany.test.VoltanyManaGeneratorTest.class,
+			vazkii.botania.gaiasim.GaiaSimulatorTest.class);
 
 	private BotaniaGameTests() {}
 

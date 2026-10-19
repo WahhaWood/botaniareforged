@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "botania:block/gaia_simulator"
+    },
+    "lit=true": {
+      "model": "botania:block/gaia_simulator"
+    }
+  }
+}

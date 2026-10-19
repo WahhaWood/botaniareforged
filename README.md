@@ -12,6 +12,12 @@ Mod id `botania`. Applied Energistics 2 is required.
 
 On top of that the fork adds ME recipe machines: Botania crafting stations that work as AE2 grid nodes.
 
+The Gaia Simulator (`vazkii/botania/gaiasim/`) replays a hard-mode Gaia Guardian fight. The multiblock is a 3x3
+base (Block of Dragonstone in the centre, Blocks of Elementium on the sides, Blocks of Terrasteel in the corners),
+with the simulator on the centre and Gaia Pylons on the corners. A fight costs 1,000,000 mana (spreader or spark on
+top) and 10,000 FE/t for 5 minutes. It rolls the Guardian's head table and the hard-mode reward of a lone winner.
+Relics are bound to whoever placed the simulator.
+
 ## Building
 
 Java 21 is required.

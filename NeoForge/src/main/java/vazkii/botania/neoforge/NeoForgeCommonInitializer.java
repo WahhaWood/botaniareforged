@@ -151,6 +151,7 @@ public class NeoForgeCommonInitializer {
 		com.jykito.voltany.VoltanyInit.init(modBus);
 		new net.lmor.botanicalextramachinery.ExtraMachinery(modBus, modContainer);
 		new vazkii.botania.ae2.AppliedBotanicsForge(modBus);
+		vazkii.botania.gaiasim.GaiaSimulator.initialize(modBus);
 		modBus.addListener(net.lmor.botanicalextramachinery.core.BemNetwork.INSTANCE::registerPayloads);
 		NeoForge.EVENT_BUS.addListener(org.moddingx.libx.impl.BlockEntityUpdateQueue::tick);
 		BotaniaGameTests.register(modBus);
