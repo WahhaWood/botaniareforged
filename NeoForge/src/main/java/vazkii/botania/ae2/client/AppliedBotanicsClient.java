@@ -1,7 +1,6 @@
 package vazkii.botania.ae2.client;
 
 import vazkii.botania.ae2.ABItems;
-import vazkii.botania.ae2.machine.MachineRecipe;
 import appeng.items.storage.BasicStorageCell;
 import appeng.items.tools.powered.PortableCellItem;
 import net.minecraft.client.color.item.ItemColor;
@@ -25,8 +24,6 @@ public final class AppliedBotanicsClient {
     public static void register(IEventBus bus) {
         bus.addListener(AppliedBotanicsClient::registerItemColors);
         ManaRenderer.initialize(bus);
-        // the client builds the recipe list of the ME machine GUI from synced recipes
-        NeoForge.EVENT_BUS.addListener((RecipesUpdatedEvent event) -> MachineRecipe.invalidate());
     }
 
     private static void registerItemColors(Item event) {

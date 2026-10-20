@@ -2,7 +2,7 @@
 
 # Botania Reforged
 
-**Форк Botania для Minecraft 1.21.1 / NeoForge с влитыми популярными аддонами и ME-машинами.**
+**Форк Botania для Minecraft 1.21.1 / NeoForge с влитыми популярными аддонами.**
 
 ![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1-62B47A)
 ![NeoForge](https://img.shields.io/badge/NeoForge-21.1-E68C2D)
@@ -11,7 +11,7 @@
 
 </div>
 
-Id мода `botania`. Требуется Applied Energistics 2.
+Id мода `botania`. Applied Energistics 2 необязателен.
 
 ## Влитые аддоны
 
@@ -26,8 +26,12 @@ Id мода `botania`. Требуется Applied Energistics 2.
 
 ## Что добавляет форк
 
-### ME-машины для рецептов
-Крафтовые станции Botania работают как узлы сети AE2, так что ME-сеть сама подаёт в них ресурсы и забирает результат.
+### Интеграция с AE2
+С AE2 мана становится ресурсом сети: ячейки, портативные ячейки, P2P-туннель, флюиксовый бассейн маны, узел корпореи.
+Машины Botanical Machinery складывают результат в сеть. Без AE2 всё это не загружается, остальной мод работает как обычно.
+
+ME-машины, которые выставляют рецепты Botania в автокрафт AE2, с версии 1.2.0 живут в
+[IndustrialReforged](https://github.com/WahhaWood/industrialreforged).
 
 ### Ячейки маны
 ME-ячейки хранят **1000 маны на байт**: ячейка 1k — ровно один полный бассейн маны. Если установлен MEGA Cells,

@@ -2,6 +2,7 @@ package net.lmor.botanicalextramachinery.blocks.pattern;
 
 import com.google.common.collect.Range;
 
+import net.lmor.botanicalextramachinery.util.MeOutput;
 import net.lmor.botanicalextramachinery.ModBlocks;
 import net.lmor.botanicalextramachinery.ModItems;
 import net.lmor.botanicalextramachinery.blocks.base.WorkingTile;
@@ -49,21 +50,10 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import appeng.api.config.Actionable;
-import appeng.api.networking.GridHelper;
-import appeng.api.networking.IGridNode;
-import appeng.api.networking.IInWorldGridNodeHost;
-import appeng.api.networking.IManagedGridNode;
-import appeng.api.networking.security.IActionSource;
-import appeng.api.stacks.GenericStack;
-import appeng.api.util.AECableType;
-import appeng.hooks.ticking.TickHandler;
-import appeng.me.helpers.BlockEntityNodeListener;
-import appeng.me.helpers.IGridConnectedBlockEntity;
 import de.melanx.botanicalmachinery.data.CommonTags;
 
 public class BlockEntityApothecaryPattern extends WorkingTile<vazkii.botania.api.recipe.PetalApothecaryRecipe>
-		implements TickingBlock, IInWorldGridNodeHost, IGridConnectedBlockEntity {
+		implements TickingBlock, MeOutput.Holder {
 	public static final int WORKING_DURATION = LibXServerConfig.ApothecarySettings.workingDuration;
 	public final int FLUID_CAPACITY;
 
@@ -166,7 +156,6 @@ public class BlockEntityApothecaryPattern extends WorkingTile<vazkii.botania.api
 					.build();
 		}
 
-		this.setChangedQueued = false;
 	}
 
 	public void bufferCheck() {
@@ -179,11 +168,9 @@ public class BlockEntityApothecaryPattern extends WorkingTile<vazkii.botania.api
 	@Override
 	public void tick() {
 		if (this.level != null && !this.level.isClientSide()) {
-			if (!this.getMainNode().isReady()) {
-				this.getMainNode().create(this.level, this.getBlockPos());
-			}
+			this.me.tick(this.level, this.getBlockPos());
 
-			if (getMainNode() != null && getMainNode().getNode() != null && getMainNode().isOnline()) {
+			if (this.me.isOnline()) {
 				if (timeCheckOutputSlot <= 0) {
 					if (checkOutputSlots()) {
 						this.exportResultsItemsME();
@@ -375,7 +362,7 @@ public class BlockEntityApothecaryPattern extends WorkingTile<vazkii.botania.api
 		this.fluidInventory.setFluid((nbt.contains("fluid") ? net.neoforged.neoforge.fluids.FluidStack.parse(registries, nbt.getCompound("fluid")).orElse(FluidStack.EMPTY) : FluidStack.EMPTY));
 		this.currentOutput = ItemStack.parseOptional(registries, nbt.getCompound("currentOutput"));
 		this.seedBuffer = nbt.getInt("seedBuffer");
-		this.getMainNode().loadFromNBT(nbt);
+		this.me.load(nbt);
 
 		this.setChanged();
 		this.setDispatchable();
@@ -395,7 +382,7 @@ public class BlockEntityApothecaryPattern extends WorkingTile<vazkii.botania.api
 			nbt.put("currentOutput", this.currentOutput.save(registries));
 		}
 		nbt.putInt("seedBuffer", this.seedBuffer);
-		this.getMainNode().saveToNBT(nbt);
+		this.me.save(nbt);
 	}
 
 	@Override
@@ -464,20 +451,17 @@ public class BlockEntityApothecaryPattern extends WorkingTile<vazkii.botania.api
 	public void setRemoved() {
 		super.setRemoved();
 
-		if (this.getMainNode() != null) {
-			this.getMainNode().destroy();
-		}
+		this.me.destroy();
 	}
 	//endregion
 
 	//region AE INTEGRATION
 
-	private boolean setChangedQueued;
+	private final MeOutput me = MeOutput.create(this, this.getItemFromBlockEntity());
 
-	private final IManagedGridNode mainNode = this.createMainNode().setVisualRepresentation(this.getItemFromBlockEntity()).setInWorldNode(true).setTagName("proxy");
-
-	protected IManagedGridNode createMainNode() {
-		return GridHelper.createManagedNode(this, BlockEntityNodeListener.INSTANCE);
+	@Override
+	public MeOutput meOutput() {
+		return this.me;
 	}
 
 	protected Item getItemFromBlockEntity() {
@@ -493,49 +477,12 @@ public class BlockEntityApothecaryPattern extends WorkingTile<vazkii.botania.api
 		}
 	}
 
-	private Object setChangedAtEndOfTick(Level level) {
-		this.setChanged();
-		this.setChangedQueued = false;
-		return null;
-	}
-
-	@Nullable
-	@Override
-	public IGridNode getGridNode(Direction direction) {
-		return this.getMainNode().getNode();
-	}
-
-	@Override
-	public IManagedGridNode getMainNode() {
-		return this.mainNode;
-	}
-
-	@Override
-	public void saveChanges() {
-		if (level != null) {
-			if (level.isClientSide) {
-				this.setChanged();
-			} else {
-				this.level.blockEntityChanged(this.worldPosition);
-				if (!this.setChangedQueued) {
-					TickHandler.instance().addCallable(null, this::setChangedAtEndOfTick);
-					this.setChangedQueued = true;
-				}
-			}
-		}
-	}
-
-	@Override
-	public AECableType getCableConnectionType(Direction dir) {
-		return AECableType.SMART;
-	}
-
 	private void exportResultsItemsME() {
 		for (int slot = FIRST_OUTPUT_SLOT; slot <= LAST_OUTPUT_SLOT; slot++) {
 			ItemStack stackInSlot = this.inventory.getStackInSlot(slot);
 
 			if (!stackInSlot.isEmpty()) {
-				int getCountExport = Math.toIntExact(this.getMainNode().getGrid().getStorageService().getInventory().insert(GenericStack.fromItemStack(stackInSlot).what(), stackInSlot.getCount(), Actionable.MODULATE, IActionSource.empty()));
+				int getCountExport = this.me.insert(stackInSlot);
 
 				if (getCountExport > 0) {
 					stackInSlot.shrink(getCountExport);

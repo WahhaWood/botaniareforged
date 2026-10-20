@@ -58,13 +58,7 @@ NOISE = re.compile(
 
 def collect_blocks():
     """(namespace, block id) pairs for every addon block."""
-    blocks = collect_ids(ADDONS, want="block")
-    # ABMachines registers one block per MachineKind constant, by the constant's id
-    kinds = ROOT / "NeoForge/src/main/java/vazkii/botania/ae2/machine/MachineKind.java"
-    if kinds.exists():
-        for name in re.findall(r'^\s*[A-Z_]+\(\s*"(me_[a-z0-9_]+)"', kinds.read_text(encoding="utf-8"), re.MULTILINE):
-            blocks.append(("botania", name))
-    return blocks
+    return collect_ids(ADDONS, want="block")
 
 
 def collect_items():

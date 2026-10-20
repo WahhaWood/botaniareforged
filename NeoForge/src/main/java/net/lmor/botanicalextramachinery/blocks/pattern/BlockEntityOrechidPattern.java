@@ -2,6 +2,7 @@ package net.lmor.botanicalextramachinery.blocks.pattern;
 
 import com.google.common.collect.Range;
 
+import net.lmor.botanicalextramachinery.util.MeOutput;
 import net.lmor.botanicalextramachinery.ModBlocks;
 import net.lmor.botanicalextramachinery.ModItems;
 import net.lmor.botanicalextramachinery.blocks.base.ExtraBotanicalTile;
@@ -40,20 +41,8 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import appeng.api.config.Actionable;
-import appeng.api.networking.GridHelper;
-import appeng.api.networking.IGridNode;
-import appeng.api.networking.IInWorldGridNodeHost;
-import appeng.api.networking.IManagedGridNode;
-import appeng.api.networking.security.IActionSource;
-import appeng.api.stacks.GenericStack;
-import appeng.api.util.AECableType;
-import appeng.hooks.ticking.TickHandler;
-import appeng.me.helpers.BlockEntityNodeListener;
-import appeng.me.helpers.IGridConnectedBlockEntity;
-
 public class BlockEntityOrechidPattern extends ExtraBotanicalTile
-		implements IInWorldGridNodeHost, IGridConnectedBlockEntity {
+		implements MeOutput.Holder {
 
 	private final List<Integer> FILTER_SLOTS = new ArrayList<>();
 
@@ -119,7 +108,6 @@ public class BlockEntityOrechidPattern extends ExtraBotanicalTile
 					.build();
 		}
 
-		this.setChangedQueued = false;
 	}
 
 	//region Base
@@ -148,11 +136,9 @@ public class BlockEntityOrechidPattern extends ExtraBotanicalTile
 	@Override
 	public void tick() {
 		if (this.level != null && !this.level.isClientSide) {
-			if (!this.getMainNode().isReady()) {
-				this.getMainNode().create(this.level, this.getBlockPos());
-			}
+			this.me.tick(this.level, this.getBlockPos());
 
-			if (getMainNode() != null && getMainNode().getNode() != null && getMainNode().isOnline()) {
+			if (this.me.isOnline()) {
 				if (timeCheckOutputSlot <= 0) {
 					if (checkOutputSlots()) {
 						this.exportResultsItemsME();
@@ -258,16 +244,14 @@ public class BlockEntityOrechidPattern extends ExtraBotanicalTile
 	public void setRemoved() {
 		super.setRemoved();
 
-		if (this.getMainNode() != null) {
-			this.getMainNode().destroy();
-		}
+		this.me.destroy();
 	}
 
 	@Override
 	public void loadAdditional(@NotNull CompoundTag nbt, HolderLookup.Provider registries) {
 		super.loadAdditional(nbt, registries);
 		this.cooldown = nbt.getInt("cooldown");
-		this.getMainNode().loadFromNBT(nbt);
+		this.me.load(nbt);
 
 		this.setChanged();
 		this.setDispatchable();
@@ -277,7 +261,7 @@ public class BlockEntityOrechidPattern extends ExtraBotanicalTile
 	public void saveAdditional(@NotNull CompoundTag nbt, HolderLookup.Provider registries) {
 		super.saveAdditional(nbt, registries);
 		nbt.putInt("cooldown", this.cooldown);
-		this.getMainNode().saveToNBT(nbt);
+		this.me.save(nbt);
 	}
 
 	@Override
@@ -404,12 +388,11 @@ public class BlockEntityOrechidPattern extends ExtraBotanicalTile
 
 	//region AE INTEGRATION
 
-	private boolean setChangedQueued;
+	private final MeOutput me = MeOutput.create(this, this.getItemFromBlockEntity());
 
-	private final IManagedGridNode mainNode = this.createMainNode().setVisualRepresentation(this.getItemFromBlockEntity()).setInWorldNode(true).setTagName("proxy");
-
-	protected IManagedGridNode createMainNode() {
-		return GridHelper.createManagedNode(this, BlockEntityNodeListener.INSTANCE);
+	@Override
+	public MeOutput meOutput() {
+		return this.me;
 	}
 
 	protected Item getItemFromBlockEntity() {
@@ -425,48 +408,12 @@ public class BlockEntityOrechidPattern extends ExtraBotanicalTile
 		}
 	}
 
-	private void setChangedAtEndOfTick(Level level) {
-		this.setChanged();
-		this.setChangedQueued = false;
-	}
-
-	@Nullable
-	@Override
-	public IGridNode getGridNode(Direction direction) {
-		return this.getMainNode().getNode();
-	}
-
-	@Override
-	public IManagedGridNode getMainNode() {
-		return this.mainNode;
-	}
-
-	@Override
-	public void saveChanges() {
-		if (level != null) {
-			if (level.isClientSide) {
-				this.setChanged();
-			} else {
-				this.level.blockEntityChanged(this.worldPosition);
-				if (!this.setChangedQueued) {
-					TickHandler.instance().addCallable(null, this::setChangedAtEndOfTick);
-					this.setChangedQueued = true;
-				}
-			}
-		}
-	}
-
-	@Override
-	public AECableType getCableConnectionType(Direction dir) {
-		return AECableType.SMART;
-	}
-
 	private void exportResultsItemsME() {
 		for (int slot = FIRST_OUTPUT_SLOT; slot <= LAST_OUTPUT_SLOT; slot++) {
 			ItemStack stackInSlot = this.inventory.getStackInSlot(slot);
 
 			if (!stackInSlot.isEmpty()) {
-				int getCountExport = Math.toIntExact(Objects.requireNonNull(this.getMainNode().getGrid()).getStorageService().getInventory().insert(GenericStack.fromItemStack(stackInSlot).what(), stackInSlot.getCount(), Actionable.MODULATE, IActionSource.empty()));
+				int getCountExport = this.me.insert(stackInSlot);
 
 				if (getCountExport > 0) {
 					stackInSlot.shrink(getCountExport);

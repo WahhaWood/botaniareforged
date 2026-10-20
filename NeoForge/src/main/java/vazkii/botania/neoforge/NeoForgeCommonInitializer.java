@@ -150,7 +150,10 @@ public class NeoForgeCommonInitializer {
 		// merged addons (BotaniaReforged)
 		com.jykito.voltany.VoltanyInit.init(modBus);
 		new net.lmor.botanicalextramachinery.ExtraMachinery(modBus, modContainer);
-		new vazkii.botania.ae2.AppliedBotanicsForge(modBus);
+		// Applied Botanics (mana in ME networks) only with AE2: no AE2 class is touched without it
+		if (XplatAbstractions.INSTANCE.isModLoaded("ae2")) {
+			new vazkii.botania.ae2.AppliedBotanicsForge(modBus);
+		}
 		vazkii.botania.gaiasim.GaiaSimulator.initialize(modBus);
 		modBus.addListener(net.lmor.botanicalextramachinery.core.BemNetwork.INSTANCE::registerPayloads);
 		NeoForge.EVENT_BUS.addListener(org.moddingx.libx.impl.BlockEntityUpdateQueue::tick);

@@ -45,7 +45,9 @@ public class ForgeClientInitializer {
         modBus.addListener(ForgeClientInitializer::registerItemColors);
         modBus.addListener(ForgeClientInitializer::registerWandHudCapabilities);
         modBus.addListener(BemMenuScreens::register);
-        vazkii.botania.ae2.client.AppliedBotanicsClient.register(modBus);
+        if (XplatAbstractions.INSTANCE.isModLoaded("ae2")) {
+            vazkii.botania.ae2.client.AppliedBotanicsClient.register(modBus);
+        }
     }
 
     @SubscribeEvent

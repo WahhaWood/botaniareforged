@@ -69,8 +69,6 @@ def java_source_ids():
         r'register\(\s*"([a-z0-9_]+)"',
         r'\.register\(\s*"([a-z0-9_]+)"',
         r'registerSimpleItem\(\s*"([a-z0-9_]+)"',
-        # the ME machine kinds: an enum constant carries the id, ABMachines registers by it
-        r'^\s*[A-Z_]+\(\s*"(me_[a-z0-9_]+)"',
     ]
     for src in sources:
         text = src.read_text(encoding="utf-8", errors="ignore")

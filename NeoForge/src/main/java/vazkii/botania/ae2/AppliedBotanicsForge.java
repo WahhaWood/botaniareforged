@@ -65,7 +65,6 @@ public class AppliedBotanicsForge {
       ABBlocks.initialize(bus);
       ABItems.initialize(bus);
       ABMenus.initialize(bus);
-      ABMachines.initialize(bus);
       DATA_COMPONENTS.register(bus);
       bus.addListener((RegisterEvent event) -> {
          if (event.getRegistryKey().equals(Registries.BLOCK)) {

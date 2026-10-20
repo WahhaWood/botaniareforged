@@ -17,6 +17,7 @@ Exit code is non-zero when any required test failed, so this can gate a commit.
 Usage:
     python3 tools/run_gametests.py                 # all tests
     python3 tools/run_gametests.py --filter relay  # only matching tests
+    python3 tools/run_gametests.py --no-ae2        # without AE2 on the classpath
 """
 
 import argparse
@@ -75,6 +76,7 @@ def main() -> int:
     parser.add_argument("--timeout", type=int, default=1800, help="seconds to wait for the run")
     parser.add_argument("--no-build", action="store_true", help="skip refreshing the resources")
     parser.add_argument("--verbose", action="store_true", help="print the tail of the log")
+    parser.add_argument("--no-ae2", action="store_true", help="run without AE2 (it is an optional dependency)")
     args = parser.parse_args()
 
     if not LAUNCH.exists():
@@ -88,7 +90,7 @@ def main() -> int:
         print("refreshing resources...")
         result = subprocess.run(
             [str(ROOT / "gradlew"), ":NeoForge:createGameTestServerLaunchScript",
-             "--console=plain", "-q"],
+             "--console=plain", "-q"] + (["-PnoAe2"] if args.no_ae2 else []),
             cwd=ROOT, env={**os.environ, "JAVA_HOME": JAVA_HOME},
             capture_output=True, text=True,
         )

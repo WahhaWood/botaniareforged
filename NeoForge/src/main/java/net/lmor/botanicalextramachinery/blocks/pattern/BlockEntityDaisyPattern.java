@@ -1,5 +1,6 @@
 package net.lmor.botanicalextramachinery.blocks.pattern;
 
+import net.lmor.botanicalextramachinery.util.MeOutput;
 import net.lmor.botanicalextramachinery.ModBlocks;
 import net.lmor.botanicalextramachinery.ModItems;
 import net.lmor.botanicalextramachinery.blocks.base.ExtraBotanicalTile;
@@ -45,20 +46,8 @@ import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import appeng.api.config.Actionable;
-import appeng.api.networking.GridHelper;
-import appeng.api.networking.IGridNode;
-import appeng.api.networking.IInWorldGridNodeHost;
-import appeng.api.networking.IManagedGridNode;
-import appeng.api.networking.security.IActionSource;
-import appeng.api.stacks.GenericStack;
-import appeng.api.util.AECableType;
-import appeng.hooks.ticking.TickHandler;
-import appeng.me.helpers.BlockEntityNodeListener;
-import appeng.me.helpers.IGridConnectedBlockEntity;
-
 public class BlockEntityDaisyPattern extends ExtraBotanicalTile implements
-		IInWorldGridNodeHost, IGridConnectedBlockEntity {
+		MeOutput.Holder {
 	/**
 	 * Every tier shares one mana pool size; the daisies differ in slot count and
 	 * craft speed, not in how much mana they hold.
@@ -128,7 +117,6 @@ public class BlockEntityDaisyPattern extends ExtraBotanicalTile implements
 				})
 				.build();
 
-		this.setChangedQueued = false;
 	}
 
 	// region: ExtraBotanicalTile plumbing
@@ -225,11 +213,9 @@ public class BlockEntityDaisyPattern extends ExtraBotanicalTile implements
 
 		if (this.level != null && !this.level.isClientSide) {
 
-			if (!this.getMainNode().isReady()) {
-				this.getMainNode().create(this.level, this.getBlockPos());
-			}
+			this.me.tick(this.level, this.getBlockPos());
 
-			if (this.getMainNode().isReady() && this.recipeOutputItem) {
+			if (this.me.isOnline() && this.recipeOutputItem) {
 				exportResultsItemsME();
 				this.recipeOutputItem = false;
 			}
@@ -432,7 +418,7 @@ public class BlockEntityDaisyPattern extends ExtraBotanicalTile implements
 		if (nbt.contains("waterProgress")) {
 			this.waterProgress = nbt.getInt("waterProgress");
 		}
-		this.getMainNode().loadFromNBT(nbt);
+		this.me.load(nbt);
 		this.setChanged();
 		this.setDispatchable();
 	}
@@ -441,7 +427,7 @@ public class BlockEntityDaisyPattern extends ExtraBotanicalTile implements
 	public void saveAdditional(@Nonnull CompoundTag nbt, HolderLookup.Provider registries) {
 		super.saveAdditional(nbt, registries);
 		nbt.putIntArray("workingTicks", this.workingTicks);
-		this.getMainNode().saveToNBT(nbt);
+		this.me.save(nbt);
 		if (this.inventoryUpgrade != null) {
 			nbt.put("invUpgrade", this.inventoryUpgrade.serializeNBT(registries));
 		}
@@ -515,12 +501,12 @@ public class BlockEntityDaisyPattern extends ExtraBotanicalTile implements
 	}
 
 	//region AE INTEGRATION
-	private boolean setChangedQueued;
 
-	private final IManagedGridNode mainNode = this.createMainNode().setVisualRepresentation(this.getItemFromBlockEntity()).setInWorldNode(true).setTagName("proxy");
+	private final MeOutput me = MeOutput.create(this, this.getItemFromBlockEntity());
 
-	protected IManagedGridNode createMainNode() {
-		return GridHelper.createManagedNode(this, BlockEntityNodeListener.INSTANCE);
+	@Override
+	public MeOutput meOutput() {
+		return this.me;
 	}
 
 	protected Item getItemFromBlockEntity() {
@@ -539,48 +525,15 @@ public class BlockEntityDaisyPattern extends ExtraBotanicalTile implements
 	@Override
 	public void setRemoved() {
 		super.setRemoved();
-		if (this.getMainNode() != null) {
-			this.getMainNode().destroy();
-		}
+		this.me.destroy();
 		// 1.21.1: no LazyOptional to invalidate
-	}
-
-	private void setChangedAtEndOfTick(Level level) {
-		this.setChanged();
-		this.setChangedQueued = false;
-	}
-
-	@Nullable
-	@Override
-	public IGridNode getGridNode(Direction direction) {
-		return this.getMainNode().getNode();
-	}
-
-	@Override
-	public IManagedGridNode getMainNode() {
-		return this.mainNode;
-	}
-
-	@Override
-	public void saveChanges() {
-		if (level != null) {
-			if (level.isClientSide) {
-				this.setChanged();
-			} else {
-				this.level.blockEntityChanged(this.worldPosition);
-				if (!this.setChangedQueued) {
-					TickHandler.instance().addCallable(null, this::setChangedAtEndOfTick);
-					this.setChangedQueued = true;
-				}
-			}
-		}
 	}
 
 	private void exportResultsItemsME() {
 		for (int slot = 0; slot < this.countSlotInventory; slot++) {
 			ItemStack stackInSlot = this.inventory.getStackInSlot(slot);
-			if (!stackInSlot.isEmpty() && this.getMainNode().getGrid() != null) {
-				int getCountExport = Math.toIntExact(this.getMainNode().getGrid().getStorageService().getInventory().insert(GenericStack.fromItemStack(stackInSlot).what(), stackInSlot.getCount(), Actionable.MODULATE, IActionSource.empty()));
+			if (!stackInSlot.isEmpty()) {
+				int getCountExport = this.me.insert(stackInSlot);
 				if (getCountExport > 0) {
 					stackInSlot.shrink(getCountExport);
 					this.inventory.setStackInSlot(slot, stackInSlot);
@@ -589,11 +542,6 @@ public class BlockEntityDaisyPattern extends ExtraBotanicalTile implements
 			}
 			this.activeUpgradeSlot(slot);
 		}
-	}
-
-	@Override
-	public AECableType getCableConnectionType(Direction dir) {
-		return AECableType.SMART;
 	}
 
 	private static class WaterOnlyTank extends FluidTank {

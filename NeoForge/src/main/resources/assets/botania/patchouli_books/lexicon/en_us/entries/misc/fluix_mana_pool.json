@@ -1,6 +1,7 @@
 {
   "name": "vazkii.botania.ae2.entry.fluix_mana_pool",
   "category": "botania:misc",
+  "flag": "mod:ae2",
   "icon": "botania:fluix_mana_pool",
   "entry_color": "aa00",
   "advancement": "botania:main/elf_lexicon_pickup",

@@ -1,6 +1,5 @@
 package vazkii.botania.ae2;
 
-import vazkii.botania.ae2.machine.MachineScreen;
 import appeng.api.implementations.menuobjects.IPortableTerminal;
 import appeng.client.gui.me.common.MEStorageScreen;
 import appeng.client.gui.style.ScreenStyle;
@@ -24,6 +23,5 @@ public class ABMenus {
          (MEStorageMenu menu, Inventory inv, Component title, ScreenStyle style) -> new MEStorageScreen<>(menu, inv, title, style),
          "/screens/terminals/portable_mana_cell.json"
       ));
-      bus.addListener((RegisterMenuScreensEvent event) -> event.register(ABMachines.MACHINE_MENU.get(), MachineScreen::new));
    }
 }

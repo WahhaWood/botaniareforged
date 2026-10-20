@@ -2,6 +2,7 @@ package net.lmor.botanicalextramachinery.blocks.tiles;
 
 import com.google.common.collect.Range;
 
+import net.lmor.botanicalextramachinery.util.MeOutput;
 import net.lmor.botanicalextramachinery.Items.ItemUpgrade;
 import net.lmor.botanicalextramachinery.ModBlocks;
 import net.lmor.botanicalextramachinery.ModItems;
@@ -9,7 +10,6 @@ import net.lmor.botanicalextramachinery.blocks.base.ExtraBotanicalTile;
 import net.lmor.botanicalextramachinery.blocks.flowersGreenhouse.GenFlowers;
 import net.lmor.botanicalextramachinery.config.LibXClientConfig;
 import net.lmor.botanicalextramachinery.config.LibXServerConfig;
-import net.lmor.botanicalextramachinery.util.ExportManaME;
 import net.lmor.botanicalextramachinery.util.ResizeBaseItemStackHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -35,17 +35,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import appeng.api.networking.GridHelper;
-import appeng.api.networking.IGridNode;
-import appeng.api.networking.IInWorldGridNodeHost;
-import appeng.api.networking.IManagedGridNode;
-import appeng.api.util.AECableType;
-import appeng.hooks.ticking.TickHandler;
-import appeng.me.helpers.BlockEntityNodeListener;
-import appeng.me.helpers.IGridConnectedBlockEntity;
-
-public class BlockEntityGreenhouse extends ExtraBotanicalTile implements IEnergyStorage,
-		IInWorldGridNodeHost, IGridConnectedBlockEntity {
+public class BlockEntityGreenhouse extends ExtraBotanicalTile implements IEnergyStorage, MeOutput.Holder {
 
 	private final static int FLOWER_SIZE = 7;
 	private final static int FUEL_SIZE = 21;
@@ -79,11 +69,6 @@ public class BlockEntityGreenhouse extends ExtraBotanicalTile implements IEnergy
 	private boolean fuelInventoryEmpty = false;
 
 	private int greenhouseSleep;
-
-	// Applied Botanics was merged into this jar and AE2 is a hard dependency of
-	// the mod, so the export is always available: there is no separate
-	// mod id to probe for.
-	private static final ExportManaME exportManaME = new ExportManaME();
 
 	public BlockEntityGreenhouse(BlockEntityType<?> blockEntityTypeIn, BlockPos pos, BlockState state) {
 		super(blockEntityTypeIn, pos, state, baseManaStorage);
@@ -130,8 +115,6 @@ public class BlockEntityGreenhouse extends ExtraBotanicalTile implements IEnergy
 					this.updateUpgradeSlot(slot);
 				})
 				.build();
-
-		this.setChangedQueued = false;
 
 		upgrade();
 	}
@@ -346,9 +329,7 @@ public class BlockEntityGreenhouse extends ExtraBotanicalTile implements IEnergy
 	@Override
 	public void tick() {
 		if (this.level != null && !this.level.isClientSide) {
-			if (this.getMainNode() != null && !this.getMainNode().isReady()) {
-				this.getMainNode().create(this.level, this.getBlockPos());
-			}
+			this.me.tick(this.level, this.getBlockPos());
 
 			if (greenhouseSleep <= 0) {
 				greenhouseSleep = upgrade_speed_craft != 0 ? (int) (LibXServerConfig.GreenhouseSettings.sleep - LibXServerConfig.GreenhouseSettings.sleep * upgrade_speed_craft) : LibXServerConfig.GreenhouseSettings.sleep;
@@ -402,11 +383,11 @@ public class BlockEntityGreenhouse extends ExtraBotanicalTile implements IEnergy
 					}
 				}
 
-				if (exportManaME != null && this.getMainNode() != null && this.getMainNode().getNode() != null && this.getMainNode().isOnline()) {
+				if (this.me.isOnline()) {
 					int threshold = (int) (this.getMaxMana() * 0.95);
 					if (this.getCurrentMana() > threshold) {
 						int excessMana = this.getCurrentMana() - threshold;
-						this.receiveMana(exportManaME.exportManaME(excessMana, this.getMainNode()));
+						this.receiveMana(-this.me.insertMana(excessMana));
 					}
 				}
 
@@ -524,9 +505,7 @@ public class BlockEntityGreenhouse extends ExtraBotanicalTile implements IEnergy
 		this.energy_capacity = nbt.getInt("energyCapacity");
 		this.count_heat = nbt.getInt("countHeat");
 
-		if (this.getMainNode() != null) {
-			this.getMainNode().loadFromNBT(nbt);
-		}
+		this.me.load(nbt);
 
 		this.reloadFuelSlots();
 
@@ -551,9 +530,7 @@ public class BlockEntityGreenhouse extends ExtraBotanicalTile implements IEnergy
 		nbt.putInt("energyStorage", this.energy);
 		nbt.putInt("energyCapacity", this.energy_capacity);
 		nbt.putInt("countHeat", this.count_heat);
-		if (this.getMainNode() != null) {
-			this.getMainNode().saveToNBT(nbt);
-		}
+		this.me.save(nbt);
 	}
 
 	@Override
@@ -653,9 +630,7 @@ public class BlockEntityGreenhouse extends ExtraBotanicalTile implements IEnergy
 	public void setRemoved() {
 		super.setRemoved();
 
-		if (this.getMainNode() != null) {
-			this.getMainNode().destroy();
-		}
+		this.me.destroy();
 	}
 
 	//endregion
@@ -718,56 +693,16 @@ public class BlockEntityGreenhouse extends ExtraBotanicalTile implements IEnergy
 
 	//region AE INTEGRATION
 
-	private boolean setChangedQueued;
+	private final MeOutput me = MeOutput.create(this, this.getItemFromBlockEntity());
 
-	private final IManagedGridNode mainNode = this.createMainNode().setVisualRepresentation(this.getItemFromBlockEntity()).setInWorldNode(true).setTagName("proxy");
-
-	protected IManagedGridNode createMainNode() {
-		return GridHelper.createManagedNode(this, BlockEntityNodeListener.INSTANCE);
+	@Override
+	public MeOutput meOutput() {
+		return this.me;
 	}
 
 	protected Item getItemFromBlockEntity() {
 		return ModBlocks.greenhouse.asItem();
 	}
 
-	private void setChangedAtEndOfTick(Level level) {
-		this.setChanged();
-		this.setChangedQueued = false;
-	}
-
-	@Nullable
-	@Override
-	public IGridNode getGridNode(Direction direction) {
-		if (this.getMainNode() == null) {
-			return null;
-		}
-
-		return this.getMainNode().getNode();
-	}
-
-	@Override
-	public IManagedGridNode getMainNode() {
-		return this.mainNode;
-	}
-
-	@Override
-	public void saveChanges() {
-		if (level != null) {
-			if (level.isClientSide) {
-				this.setChanged();
-			} else {
-				this.level.blockEntityChanged(this.worldPosition);
-				if (!this.setChangedQueued) {
-					TickHandler.instance().addCallable(null, this::setChangedAtEndOfTick);
-					this.setChangedQueued = true;
-				}
-			}
-		}
-	}
-
-	@Override
-	public AECableType getCableConnectionType(Direction dir) {
-		return AECableType.SMART;
-	}
 	//endregion
 }

@@ -110,7 +110,6 @@ public class ABItems {
 					.title(Component.translatable("itemGroup.botania.tab"))
 					.icon(() -> new ItemStack(FLUIX_MANA_POOL.get()))
 					.displayItems((context, entries) -> {
-						ABMachines.tabItems().forEach(entries::accept);
 						for (DeferredHolder<Item, ? extends Item> holder : ITEMS.getEntries()) {
 							Item item = holder.get();
 							entries.accept(item);

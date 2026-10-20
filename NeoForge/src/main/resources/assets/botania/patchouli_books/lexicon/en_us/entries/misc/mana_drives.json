@@ -1,6 +1,7 @@
 {
   "name": "vazkii.botania.ae2.entry.mana_drives",
   "category": "botania:misc",
+  "flag": "mod:ae2",
   "icon": "botania:mana_cell_housing",
   "entry_color": "aa00",
   "advancement": "botania:main/elf_lexicon_pickup",

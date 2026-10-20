@@ -55,6 +55,11 @@ import vazkii.botania.test.TestingUtil;
  */
 public class BemIndustrialAgglomerationFactoryTest {
 	private static final String ARENA = "botania:addon_arena";
+	/**
+	 * Own batch: the no-mana test fails when an arena of another test that hands out mana lands next to it, which
+	 * depends on how many tests run before (fewer without AE2).
+	 */
+	private static final String BATCH = "bem_agglomeration_factory";
 	private static final BlockPos FACTORY = new BlockPos(2, 2, 2);
 
 	/** The base tier's own slot layout. */
@@ -143,7 +148,7 @@ public class BemIndustrialAgglomerationFactoryTest {
 		return sb.isEmpty() ? "nothing" : sb.toString();
 	}
 
-	@GameTest(template = ARENA, timeoutTicks = 500)
+	@GameTest(template = ARENA, batch = BATCH, timeoutTicks = 500)
 	public void craftsTheTerraPlateRecipe(GameTestHelper helper) {
 		BlockEntityIndustrialAgglomerationFactoryPattern factory = placeBase(helper);
 		fillInputs(factory, FIRST_INPUT_SLOT, TERRASTEEL_INGOT, GAIA_SPIRIT, ELEMENTIUM_INGOT);
@@ -157,7 +162,7 @@ public class BemIndustrialAgglomerationFactoryTest {
 				.thenSucceed();
 	}
 
-	@GameTest(template = ARENA, timeoutTicks = 500)
+	@GameTest(template = ARENA, batch = BATCH, timeoutTicks = 500)
 	public void consumesTheInputsAndPaysInMana(GameTestHelper helper) {
 		BlockEntityIndustrialAgglomerationFactoryPattern factory = placeBase(helper);
 		fillInputs(factory, FIRST_INPUT_SLOT, TERRASTEEL_INGOT, GAIA_SPIRIT, ELEMENTIUM_INGOT);
@@ -180,7 +185,7 @@ public class BemIndustrialAgglomerationFactoryTest {
 				.thenSucceed();
 	}
 
-	@GameTest(template = ARENA, timeoutTicks = 500)
+	@GameTest(template = ARENA, batch = BATCH, timeoutTicks = 500)
 	public void refusesTheWrongInputs(GameTestHelper helper) {
 		BlockEntityIndustrialAgglomerationFactoryPattern factory = placeBase(helper);
 		// A stick is an ingredient of no terra plate recipe.
@@ -207,7 +212,7 @@ public class BemIndustrialAgglomerationFactoryTest {
 				.thenSucceed();
 	}
 
-	@GameTest(template = ARENA, timeoutTicks = 500)
+	@GameTest(template = ARENA, batch = BATCH, timeoutTicks = 500)
 	public void doesNothingWithEmptyInputs(GameTestHelper helper) {
 		BlockEntityIndustrialAgglomerationFactoryPattern factory = placeBase(helper);
 		int manaBefore = factory.getCurrentMana();
@@ -228,7 +233,7 @@ public class BemIndustrialAgglomerationFactoryTest {
 				.thenSucceed();
 	}
 
-	@GameTest(template = ARENA, timeoutTicks = 300)
+	@GameTest(template = ARENA, batch = BATCH, timeoutTicks = 300)
 	public void makesNoProgressWithoutMana(GameTestHelper helper) {
 		BlockEntityIndustrialAgglomerationFactoryPattern factory = placeBase(helper);
 		fillInputs(factory, FIRST_INPUT_SLOT, TERRASTEEL_INGOT, GAIA_SPIRIT, ELEMENTIUM_INGOT);
@@ -249,7 +254,7 @@ public class BemIndustrialAgglomerationFactoryTest {
 				.thenSucceed();
 	}
 
-	@GameTest(template = ARENA, timeoutTicks = 400)
+	@GameTest(template = ARENA, batch = BATCH, timeoutTicks = 400)
 	public void spendsManaOnAPartialCraft(GameTestHelper helper) {
 		BlockEntityIndustrialAgglomerationFactoryPattern factory = placeBase(helper);
 		fillInputs(factory, FIRST_INPUT_SLOT, TERRASTEEL_INGOT, GAIA_SPIRIT, ELEMENTIUM_INGOT);
@@ -269,7 +274,7 @@ public class BemIndustrialAgglomerationFactoryTest {
 				.thenSucceed();
 	}
 
-	@GameTest(template = ARENA, timeoutTicks = 900)
+	@GameTest(template = ARENA, batch = BATCH, timeoutTicks = 900)
 	public void craftsTheSixIngredientPlateOnTheAdvancedTier(GameTestHelper helper) {
 		BlockEntityIndustrialAgglomerationFactoryPattern factory = placeAdvanced(helper);
 		// The aureate plate wants six ingredients; the advanced tier has seven input slots.
@@ -293,7 +298,7 @@ public class BemIndustrialAgglomerationFactoryTest {
 				.thenSucceed();
 	}
 
-	@GameTest(template = ARENA, timeoutTicks = 900)
+	@GameTest(template = ARENA, batch = BATCH, timeoutTicks = 900)
 	public void theBaseTierCannotHoldTheSixIngredientRecipe(GameTestHelper helper) {
 		BlockEntityIndustrialAgglomerationFactoryPattern factory = placeBase(helper);
 		// Three of the aureate plate's six ingredients, which is all the base tier has room for.

@@ -46,13 +46,18 @@ modId = "curios"
 type = "required"
 versionRange = "*"
 
-# Required by the merged Botanical Extra Machinery addon: every machine block
-# entity implements AE2's IInWorldGridNodeHost / IGridConnectedBlockEntity and
-# talks to TickHandler, so loading without AE2 is a NoClassDefFoundError.
+# Optional: with AE2, mana goes into ME networks (cells, P2P, Fluix pool, corporea node)
+# and the Botanical Machinery machines store their output there.
 [[dependencies.botania]]
 modId = "ae2"
-type = "required"
+type = "optional"
 versionRange = "[19.2.17,)"
+ordering = "AFTER"
+
+[[dependencies.botania]]
+modId = "megacells"
+type = "optional"
+versionRange = "*"
 
 [[dependencies.botania]]
 modId = "gardenofglass"

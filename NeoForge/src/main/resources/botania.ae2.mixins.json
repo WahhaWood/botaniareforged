@@ -2,15 +2,14 @@
   "required": true,
   "minVersion": "0.8",
   "package": "vazkii.botania.ae2.mixins",
+  "plugin": "vazkii.botania.ae2.Ae2MixinPlugin",
   "mixins": [
     "BotaniaBlockEntitiesMixin",
     "ManaPoolBlockEntityAccessor",
     "Pool",
     "TAPBE",
     "ClampedAboveInsertOnly",
-    "FullPassthroughInsertOnly",
-    "CraftingCpuLogicMixin",
-    "TaskProgressAccessor"
+    "FullPassthroughInsertOnly"
   ],
   "injectors": {
     "defaultRequire": 1

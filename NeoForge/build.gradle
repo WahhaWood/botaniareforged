@@ -84,9 +84,12 @@ dependencies {
     implementation(libs.patchouli.neoforge)
     compileOnly(variantOf(libs.curios) { classifier("api") })
 
-    // Applied Energistics 2 — needed to compile/run the AE2 integration (Applied Botanics)
+    // Applied Energistics 2: optional, compiles the AE2 integration (Applied Botanics, ME output of the
+    // Botanical Machinery machines). -PnoAe2 runs the dev game and game tests without it
     compileOnly(libs.ae2) { transitive = false }
-    runtimeOnly(libs.ae2)
+    if (!project.hasProperty("noAe2")) {
+        runtimeOnly(libs.ae2)
+    }
 
     // KubeJS. compileOnly because the plugin class is only ever loaded by
     // KubeJS itself, so a pack without KubeJS never touches it and the mod

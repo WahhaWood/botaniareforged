@@ -1,9 +1,8 @@
 package net.lmor.botanicalextramachinery.core;
 
-import appeng.api.AECapabilities;
-import appeng.api.networking.IInWorldGridNodeHost;
-
 import net.lmor.botanicalextramachinery.ExtraMachinery;
+import net.lmor.botanicalextramachinery.ae2.MeOutputNode;
+import net.lmor.botanicalextramachinery.util.MeOutput;
 import net.lmor.botanicalextramachinery.ModBlocks;
 import net.lmor.botanicalextramachinery.ModItems;
 import net.lmor.botanicalextramachinery.blocks.pattern.BlockEntityApothecaryPattern;
@@ -231,10 +230,9 @@ public final class BemRegistration {
 		}
 		// AE2 finds an in-world grid node only through this capability. Without it
 		// cables never connect and the ME export of every machine stays dead.
-		evt.registerBlockEntity(
-				AECapabilities.IN_WORLD_GRID_NODE_HOST,
-				beType,
-				(be, side) -> (IInWorldGridNodeHost) be);
+		if (MeOutput.AE2) {
+			MeOutputNode.registerCapability(evt, beType);
+		}
 		// Item handler
 		evt.registerBlockEntity(
 				Capabilities.ItemHandler.BLOCK,

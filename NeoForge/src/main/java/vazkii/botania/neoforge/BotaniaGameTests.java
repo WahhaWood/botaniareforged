@@ -22,6 +22,7 @@ import net.neoforged.neoforge.event.RegisterGameTestsEvent;
 import vazkii.botania.api.BotaniaAPI;
 import vazkii.botania.test.TestClasses;
 import vazkii.botania.test.item.lens.BoreLensTest;
+import vazkii.botania.xplat.XplatAbstractions;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -29,6 +30,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
+
+import vazkii.botania.xplat.XplatAbstractions;
 
 /**
  * Registers Botania's game tests on NeoForge.
@@ -53,24 +57,30 @@ import java.util.List;
  * {@code GameTestRegistry} -- so they are re-declared below and delegated to.
  */
 public class BotaniaGameTests {
-	/** Tests for the merged addons, which are loader specific code. */
-	private static final List<Class<?>> ADDON_TESTS = List.of(
-			net.lmor.botanicalextramachinery.test.BemDaisyTest.class,
-			net.lmor.botanicalextramachinery.test.BemMeNodeTest.class,
-			net.lmor.botanicalextramachinery.test.BemManaInfuserTest.class,
-			net.lmor.botanicalextramachinery.test.BemManaPoolTest.class,
-			net.lmor.botanicalextramachinery.test.BemJadedAmaranthusTest.class,
-			net.lmor.botanicalextramachinery.test.BemOrechidTest.class,
-			net.lmor.botanicalextramachinery.test.BemRunicAltarTest.class,
-			net.lmor.botanicalextramachinery.test.BemAlfheimMarketTest.class,
-			net.lmor.botanicalextramachinery.test.BemApothecaryTest.class,
-			net.lmor.botanicalextramachinery.test.BemGreenhouseTest.class,
-			net.lmor.botanicalextramachinery.test.BemIndustrialAgglomerationFactoryTest.class,
-			vazkii.botania.ae2.ae2.ManaCellTest.class,
-			vazkii.botania.ae2.machine.MachineTest.class,
-			com.jykito.voltany.test.VoltanyFlowerTierTest.class,
-			com.jykito.voltany.test.VoltanyManaGeneratorTest.class,
-			vazkii.botania.gaiasim.GaiaSimulatorTest.class);
+	/**
+	 * Tests for the merged addons, which are loader specific code. Named rather than referenced, so the tests of the
+	 * AE2 integration can be skipped without AE2; the order is kept, since it decides where each test runs.
+	 */
+	private static final List<String> ADDON_TESTS = List.of(
+			"net.lmor.botanicalextramachinery.test.BemDaisyTest",
+			"net.lmor.botanicalextramachinery.test.BemMeNodeTest",
+			"net.lmor.botanicalextramachinery.test.BemManaInfuserTest",
+			"net.lmor.botanicalextramachinery.test.BemManaPoolTest",
+			"net.lmor.botanicalextramachinery.test.BemJadedAmaranthusTest",
+			"net.lmor.botanicalextramachinery.test.BemOrechidTest",
+			"net.lmor.botanicalextramachinery.test.BemRunicAltarTest",
+			"net.lmor.botanicalextramachinery.test.BemAlfheimMarketTest",
+			"net.lmor.botanicalextramachinery.test.BemApothecaryTest",
+			"net.lmor.botanicalextramachinery.test.BemGreenhouseTest",
+			"net.lmor.botanicalextramachinery.test.BemIndustrialAgglomerationFactoryTest",
+			"vazkii.botania.ae2.ae2.ManaCellTest",
+			"com.jykito.voltany.test.VoltanyFlowerTierTest",
+			"com.jykito.voltany.test.VoltanyManaGeneratorTest",
+			"vazkii.botania.gaiasim.GaiaSimulatorTest");
+	/** Of {@link #ADDON_TESTS}, the ones that need AE2. */
+	private static final Set<String> AE2_TESTS = Set.of(
+			"net.lmor.botanicalextramachinery.test.BemMeNodeTest",
+			"vazkii.botania.ae2.ae2.ManaCellTest");
 
 	private BotaniaGameTests() {}
 
@@ -81,8 +91,15 @@ public class BotaniaGameTests {
 			collect(testClass, out);
 		}
 		// Addon tests live on the loader side, since the addons themselves do.
-		for (Class<?> addonTest : ADDON_TESTS) {
-			collect(addonTest, out);
+		boolean ae2 = XplatAbstractions.INSTANCE.isModLoaded("ae2");
+		for (String name : ADDON_TESTS) {
+			if (ae2 || !AE2_TESTS.contains(name)) {
+				try {
+					collect(Class.forName(name), out);
+				} catch (ClassNotFoundException e) {
+					throw new IllegalStateException(e);
+				}
+			}
 		}
 		BotaniaAPI.LOGGER.info("Collected {} game test functions", out.size());
 		return out;
