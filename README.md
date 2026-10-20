@@ -2,7 +2,7 @@
 
 # Botania Reforged
 
-**A fork of Botania for Minecraft 1.21.1 / NeoForge with popular addons merged in and ME-powered machines.**
+**Форк Botania для Minecraft 1.21.1 / NeoForge с влитыми популярными аддонами и ME-машинами.**
 
 ![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1-62B47A)
 ![NeoForge](https://img.shields.io/badge/NeoForge-21.1-E68C2D)
@@ -11,58 +11,57 @@
 
 </div>
 
-Mod id `botania`. Applied Energistics 2 is required.
+Id мода `botania`. Требуется Applied Energistics 2.
 
-## Merged addons
+## Влитые аддоны
 
-One jar instead of a pile of addons:
+Один jar вместо груды аддонов:
 
-| Addon | Package |
+| Аддон | Пакет |
 | --- | --- |
 | Applied Botanics | `vazkii/botania/ae2/` |
 | Botanical Machinery Extra | `net/lmor/botanicalextramachinery/` |
 | Voltany | `com/jykito/voltany/` |
-| Garden of Glass | `garden_of_glass/` (skyblock datapack) |
+| Garden of Glass | `garden_of_glass/` (датапак скайблока) |
 
-## What the fork adds
+## Что добавляет форк
 
-### ME recipe machines
-Botania crafting stations that work as AE2 grid nodes, so the ME network can feed and empty them.
+### ME-машины для рецептов
+Крафтовые станции Botania работают как узлы сети AE2, так что ME-сеть сама подаёт в них ресурсы и забирает результат.
 
-### Mana cells
-ME mana cells hold **1000 mana per byte**: a 1k cell is exactly one full mana pool. With MEGA Cells installed
-there are also 1M-256M mana cells and portable cells, crafted from the mana cell housing and a MEGA cell
-component. MEGA Cells' own mana cells stay off, since they look for the standalone Applied Botanics mod.
+### Ячейки маны
+ME-ячейки хранят **1000 маны на байт**: ячейка 1k — ровно один полный бассейн маны. Если установлен MEGA Cells,
+появляются ячейки 1M–256M и портативные ячейки: их крафтят из корпуса ячейки маны и компонента MEGA-ячейки.
+Собственные ячейки маны MEGA Cells выключены, потому что они ищут отдельный мод Applied Botanics.
 
-### Gaia Simulator
-Replays a hard-mode Gaia Guardian fight without the arena (`vazkii/botania/gaiasim/`).
+### Симулятор Гайи
+Воспроизводит бой с Хранителем Гайи в сложном режиме без арены (`vazkii/botania/gaiasim/`).
 
-- **Multiblock:** a 3x3 slab of Blocks of Elementium with a 3x3 base on it (Block of Dragonstone in the centre,
-  Malachite Blocks on the sides, Blocks of Terrasteel in the corners). The simulator goes on the centre,
-  Gaia Pylons on the corners.
-- **Cost:** 1,000,000 mana (a spreader or spark on top) and 10,000 FE/t for 5 minutes.
-- **Reward:** rolls the Guardian's head table and the hard-mode reward of a lone winner. Relics are bound to
-  whoever placed the simulator.
-- **Lexicon:** has an entry in Alfhomancy with a visualizable multiblock page.
+- **Мультиблок:** плита 3×3 из блоков элементиума, на ней основание 3×3 (блок драконита в центре, малахитовые
+  блоки по сторонам, блоки террастали по углам). Симулятор ставится в центр, пилоны Гайи — по углам.
+- **Цена:** 1 000 000 маны (распределитель или искра сверху) и 10 000 FE/t в течение 5 минут.
+- **Награда:** бросок таблицы головы Хранителя и награда за одиночную победу в сложном режиме. Реликвии
+  привязываются к тому, кто поставил симулятор.
+- **Лексикон:** есть запись в разделе Alfhomancy со страницей с визуализацией мультиблока.
 
-## Building
+## Сборка
 
-Java 21 is required.
+Нужна Java 21.
 
 ```sh
 ./gradlew build
 ```
 
-## Credits
+## Благодарности
 
-- **Botania** and **Garden of Glass** were created by **Vazkii** and the Botania contributors.
-- **Applied Botanics** was created by **ramidzkh**.
-- **Botanical Machinery Extra** was created by **LMor**.
-- **Voltany** was created by **jykito**.
+- **Botania** и **Garden of Glass** создали **Vazkii** и участники проекта Botania.
+- **Applied Botanics** создал **ramidzkh**.
+- **Botanical Machinery Extra** создал **LMor**.
+- **Voltany** создал **jykito**.
 
-This is an unofficial fork, not affiliated with or endorsed by the original authors.
+Это неофициальный форк, он не связан с оригинальными авторами и не одобрен ими.
 
-## License
+## Лицензия
 
-Botania is distributed under the [Botania License](LICENSE.txt), and so is this fork.
-Parts imported from other projects keep their own licenses, see [ALTERNATE_LICENSES.txt](ALTERNATE_LICENSES.txt).
+Botania распространяется по [лицензии Botania](LICENSE.txt), и этот форк тоже.
+Части, импортированные из других проектов, сохраняют свои лицензии, см. [ALTERNATE_LICENSES.txt](ALTERNATE_LICENSES.txt).
